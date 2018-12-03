@@ -52,7 +52,7 @@ if ($continua)
         "( " .
         "   '" . $row['idCertificado'] . "', '" . $row['NroCertificado'] . "', '"
         . $row['idTaller'] . "', " . "'" . $row['FechaHoraCarga'] . "', '" . $row['FechaCalibracion'] . "', '" .
-        $row['FechaVencimiento'] . "', '" . $row['idEmpresa'] . "', '" . mysql_real_escape_string($row['PropUsuario']) . "', '" . $row['Dominio'] . "', '"
+        $row['FechaVencimiento'] . "', '" . $row['idEmpresa'] . "', '" . addslashes($row['PropUsuario']) . "', '" . $row['Dominio'] . "', '"
         . $row['NroInterno'] . "', '" . $row['Kilometraje'] . "', '" . $row['TacMarca'] . "', '" . $row['TacTipo'] . "', '" .
         $row['TacModelo'] . "', '" . $row['TacNroSerie'] . "', '" . $row['RelW'] . "', '" . $row['ConstanteK'] . "', '" .
         $row['Rodado'] . "', '" . $row['Precinto'] . "', '" . $row['Impresora'] . "', '" . $row['NroInforme'] . "', '" . $row['CantHojas'] . "', '" .

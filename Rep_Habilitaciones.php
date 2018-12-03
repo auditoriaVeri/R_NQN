@@ -55,14 +55,14 @@ if ($continua)
       // a Recorrar y Armar
       $ServiciosHabilitados = "";
 
-      $Servicios = $base->query($sql);
+      $Servicios = $dbUNC->query($sql);
       if ($Servicios)
       {
         /*   * *** Por cada persona vamos a ver si esta el server => update, si no esta => insert *** */
 
         foreach ($Servicios as $RowS)
         {
-          $ServiciosHabilitados+= $RowS["descripcion"] + ";";
+          $ServiciosHabilitados.= $RowS["descripcion"] . ";";
         }
 
         $ComandoSQL =
@@ -84,7 +84,7 @@ if ($continua)
           $row['apellidoConductor'] . "', '" . $row['domicilioConductor'] . "', " . $row['idLocalidadConductor'] . ", '" .
           $row['usuarioDictamen'] . "', '" . $row['fechaHoraDictamen'] . "', '" . $row['tipoDocTitular'] . "', '" .
           $row['nroDocTitular'] . "', '" . $row['tipoPersona'] . "', '" . $row['razonSocialTitular'] . "', '" .
-          $row['cuitTitular'] . "', " . $row['idTipoServicio'] . ", '" . $ServiciosHabilitados + "'" .
+          $row['cuitTitular'] . "', " . $row['idTipoServicio'] . ", '" . $ServiciosHabilitados . "'" .
           " )";
 
         // echo $ComandoSQL;exit();

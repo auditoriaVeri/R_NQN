@@ -21,7 +21,7 @@ try {
 
 //$dbUNC = new PDO('mysql:host=localhost;dbname=vehicularunc;charset=utf8', 'root', '');
 $base = new PDOConfig();
-$idTaller = 17;
+$idTaller = 1111117;
 $nomTaller = "Veritecnica SRL";
 $usu = "replicación automatica";
 $cantPaC = 0;
