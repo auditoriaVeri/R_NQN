@@ -4,7 +4,7 @@ if($continua){
 	$sql = " SELECT * FROM talleres WHERE Replicado = 0 ";
 	$respVer = $base->query($sql);
 	if($respVer){
-		/***** Por cada taller (deberia ser uno solo) vamos a ver si esta el server => update, si no esta => insert ****/
+		/***** Por cada taller (deberia ser uno solo) vamos a ver si esta el server => update, si no esta => insert  ****/
 		foreach ($respVer as $row)
 		{		
 			$sqlSer = "SELECT * FROM talleres WHERE idTaller = ".$row["idTaller"];

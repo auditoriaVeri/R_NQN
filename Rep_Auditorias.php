@@ -96,3 +96,4 @@ $sql = " SELECT * FROM auditoriasequipos WHERE Replicado = 0 ";
 
 
 
+

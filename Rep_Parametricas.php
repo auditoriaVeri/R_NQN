@@ -28,7 +28,7 @@ if ($continua)
             $mensaje .= "Se ejecuto correctamente: \\** $sql \\** <br />";
           } else {
             $mensaje .= "Ocurrio un error al ejecutar: \\** $sql \\** <br />";
-            $msnlog = "Ocurrio un error actualizando tablas parametricas:  $sql .<br />";
+            $msnlog .= "Ocurrio un error actualizando tablas parametricas:  $sql .<br />";
             $continua = false;
             $numSal = 0;
             break;

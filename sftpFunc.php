@@ -3,7 +3,9 @@ include_once("conexionSFTP.php");
 
 function SubirArchivo($archivo_local, $archivo_remoto) 
 {
-  $host = "vtvunc.ddns.net";
+
+
+$host = "vtvunc.ddns.net";
   $puerto = 22;
   $usuario = "usrftp";
   $password = "v8276TA";
@@ -22,6 +24,7 @@ function SubirArchivo($archivo_local, $archivo_remoto)
   } else {
     $salida = false;
     echo "No ha sido posible conectar con el servidor <br />";
+
   }
 
   return $salida;

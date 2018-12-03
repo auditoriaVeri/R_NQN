@@ -6,7 +6,7 @@
 if($continua)
 {
   // Obtengo lo último qie tengo
-  $sql= " SELECT MAX(fechaHoraUltModificacion) as MaxFH FROM habilitacion";
+  $sql= " SELECT MAX(FechaHoraCarga) as MaxFH FROM cccf_certificados";
   $respVer = $base->query($sql);
   if($respVer)
   {
@@ -15,7 +15,7 @@ if($continua)
   }
   else
   {
-    $msnlog = "Ocurrio un error al obtener las habilitaciones en central.";
+    $msnlog = "Ocurrio un error al obtener los certificados CCCF en central.";
 		$continua = false;
   }
 }
@@ -24,7 +24,11 @@ if($continua)
 if ($continua)  
 {
   // Obtengo todo lo que sea nuevo de central
-	$sql = " SELECT * FROM habilitacion WHERE fechaHoraUltModificacion > '$MaxFH'";
+  if ($MaxFH == null)
+    $sql= "SELECT * FROM cccf_certificados ORDER BY FechaHoraCarga";
+  else
+    $sql = " SELECT * FROM cccf_certificados WHERE FechaHoraCarga > '$MaxFH' ORDER BY FechaHoraCarga";
+//echo $sql;exit;
 	$respVer = $dbUNC->query($sql);
   if($respVer)
   {
@@ -32,57 +36,54 @@ if ($continua)
 		foreach ($respVer as $row)
 		{		
       // Acá no hay update mierda
-      $ComandoSQL= "DELETE FROM habilitacion WHERE idHabilitacion = " . $row['idHabilitacion'];
-      $respVer = $base->query($sql);
-      if (!$respVer)
-      {
-        $msnlog = "Ocurrio un error al guardar las habilitaciones en taller PASO 1.";
-        $continua = false;        
-        break;
-      }
-        
       $ComandoSQL=
-        " INSERT INTO habilitacion" .
-        " (" . 
-        "    idHabilitacion, nroCodigoBarrasHab, activo, fechaHoraCreacion, modificado, fechaHoraUltModificacion, " .
-        "    historialModificacion, dominio, marcaVehiculo, modeloVehiculo, idLocalidadVehiculo, nombreTitular, " . 
-        "    apellidoTitular, domicilioTitular, idLocalidadTitular, nombreConductor, apellidoConductor, domicilioConductor, " .
-        "    idLocalidadConductor, usuarioDictamen, fechaHoraDictamen, tipoDocTitular, nroDocTitular, tipoPersona, " . 
-        "     razonSocialTitular, cuitTitular, idTipoServicio" .
-        " )" . 
-        " VALUES" . 
-        " (" . 
-        $row['idHabilitacion'] . ", '" . $row['nroCodigoBarrasHab'] . "', " . $row['activo'] . ", '" . $row['fechaHoraCreacion'] . "', " .
-        $row['modificado'] . ", '" . $row['fechaHoraUltModificacion'] . "', '" . $row['historialModificacion'] . "', '" .
-        $row['dominio'] . "', '" . $row['marcaVehiculo'] . "', '" . $row['modeloVehiculo'] . "', " . 
-        $row['idLocalidadVehiculo'] . ", '" . $row['nombreTitular'] . "', '" . $row['apellidoTitular'] . "', '" .
-        $row['domicilioTitular'] . "', " . $row['idLocalidadTitular'] . ", '" . $row['nombreConductor'] . "', '" .
-        $row['apellidoConductor'] . "', '" . $row['domicilioConductor'] .  "', "  . $row['idLocalidadConductor'] . ", '" . 
-        $row['usuarioDictamen'] . "', '" . $row['fechaHoraDictamen'] . "', '". $row['tipoDocTitular'] . "', '" .
-        $row['nroDocTitular'] . "', '" . $row['tipoPersona'] . "', '" . $row['razonSocialTitular'] . "', '" . 
-        $row['cuitTitular'] . "', " . $row['idTipoServicio'] .
-        " )";
-      
+        " INSERT INTO cccf_certificados " .
+        " (" .
+        "   idCertificado, NroCertificado, idTaller, " .
+        "   FechaHoraCarga, FechaCalibracion, FechaVencimiento, idEmpresa, " .
+        "   PropUsuario, Dominio, NroInterno, Kilometraje, TacMarca, TacTipo, " .
+        "   TacModelo, TacNroSerie, RelW, ConstanteK, Rodado, Precinto, Impresora, " .
+        "   NroInforme, CantHojas, Observaciones, usuario, idEstado, FechaAnulacion, " .
+        "   ObservacionesAnulacion, PatenteMercosur, CBVerificador, SinExcesos, DesconexionCantidad, " .
+        "   DesconexionHora, AperturaEquipo, RetiroElementoGrabacion, " .
+        "   FallasDispositivo, FaltaInformacion" .
+        " )" .
+	      " VALUES " .
+        "( " .
+        "   '" . $row['idCertificado'] . "', '" . $row['NroCertificado'] . "', '"
+        . $row['idTaller'] . "', " . "'" . $row['FechaHoraCarga'] . "', '" . $row['FechaCalibracion'] . "', '" .
+        $row['FechaVencimiento'] . "', '" . $row['idEmpresa'] . "', '" . mysql_real_escape_string($row['PropUsuario']) . "', '" . $row['Dominio'] . "', '"
+        . $row['NroInterno'] . "', '" . $row['Kilometraje'] . "', '" . $row['TacMarca'] . "', '" . $row['TacTipo'] . "', '" .
+        $row['TacModelo'] . "', '" . $row['TacNroSerie'] . "', '" . $row['RelW'] . "', '" . $row['ConstanteK'] . "', '" .
+        $row['Rodado'] . "', '" . $row['Precinto'] . "', '" . $row['Impresora'] . "', '" . $row['NroInforme'] . "', '" . $row['CantHojas'] . "', '" .
+        $row['Observaciones'] . "', '" . $row['usuario'] . "', '" . $row['idEstado'] . "', '" . $row['FechaAnulacion'] . "', '" .
+        $row['ObservacionesAnulacion'] . "', '" . $row['PatenteMercosur'] . "', '" . $row['CBVerificador'] . "', '" . $row['SinExcesos'] . "', '" .
+        $row['DesconexionCantidad'] . "', '" . $row['DesconexionHora'] . "', '" . $row['AperturaEquipo'] . "', '" .
+        $row['RetiroElementoGrabacion'] . "', '" . $row['FallasDispositivo'] . "', '" . $row['FaltaInformacion'] . "'" .
+        ")";
+
+//echo $ComandoSQL;exit;
+
      // echo $ComandoSQL;exit();
       if(!$base->query($ComandoSQL))
       {
           /**** SI OCURRIO UN ERROR CORTAMOS EL PROCESO *****/
           $msnlog = 
-            "Ocurrio un error al replicar una habilitacion - idHabilitacion: " . $row["idHabilitacion"];
+            "Ocurrio un error al replicar un certificado cccf - idCertificado: " . $row["idCertificado"];
           echo $ComandoSQL;
           $continua = false;
           break;
       }
       else
       {
-        $cantHabilitaciones++;
+        $cantCertificadosCCCF++;
       }
     }
   }
   else
   {
     /**** SI OCURRIO UN ERROR CORTAMOS EL PROCESO *****/
-    $msnlog = "Ocurrio un error al buscar habilitaciones para replicar.";
+    $msnlog = "Ocurrio un error al buscar certificados cccf para replicar.";
     $continua = false;
   }
 }

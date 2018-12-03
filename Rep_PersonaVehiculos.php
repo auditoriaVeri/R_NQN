@@ -1,7 +1,7 @@
 <?php
 
 require_once('PDOConfig.php');
-require_once("ftpfunc.php");
+require_once("sftpFunc.php");
 require_once('utilidades.php');
 $mensaje = "";
 $msnlog = "";
@@ -10,10 +10,10 @@ $msnlog = "";
 set_time_limit(0);
 
 try {
-  $dbUNC = new PDO('mysql:host=vtvunc.ddns.net;dbname=vehicularunc;charset=utf8', 'usrRem', 'eureRemoto');
+  //$dbUNC = new PDO('mysql:host=vtvunc.ddns.net;dbname=vehicularunc;charset=utf8', 'usrRem', 'eureRemoto');
  //wewe
   //wewew
- // $dbUNC = new PDO('mysql:host=localhost;dbname=dd_vehicularunc;charset=utf8', 'root', '');
+  $dbUNC = new PDO('mysql:host=localhost;dbname=uncrto_centralnqn;charset=utf8', 'root', 'eurePass');
 } catch (Exception $e) {
   echo $e->getMessage();
   exit();
@@ -21,8 +21,8 @@ try {
 
 //$dbUNC = new PDO('mysql:host=localhost;dbname=vehicularunc;charset=utf8', 'root', '');
 $base = new PDOConfig();
-$idTaller = 98989999999;
-$nomTaller = "Cambiar";
+$idTaller = 17;
+$nomTaller = "Veritecnica SRL";
 $usu = "replicación automatica";
 $cantPaC = 0;
 $cantVaC = 0;
@@ -37,6 +37,8 @@ $cantDefectosEnVerificaciones= 0;
 $actTaller = 0;
 $actDT = 0;
 $actINS = 0;
+$cantHabilitaciones= 0;
+$cantCertificadosCCCF= 0;
 $obleasEnv = 0;
 $obleasRec = 0;
 
@@ -416,6 +418,8 @@ include 'Rep_VerifCertificados.php';
 include 'Rep_Equipos.php';
 include 'Rep_Auditorias.php';
 include 'Rep_Taller.php';
+include 'Rep_Habilitaciones.php';
+include 'Rep_CertificadosCCCF.php';
 include 'Rep_Adjuntos.php';
 include 'Rep_Parametricas.php';
 
@@ -443,6 +447,8 @@ echo "<p>Se enviaron $cantPaC registros de personas a Central.<br /> Se enviaron
 	  <br /> Se enviaron $cantEquiposAC registros de equipos a Central.
 	  <br /> Se enviaron $cantMantEqAC registros de mantenimientos a equipos a Central.
 	  <br /> Se enviaron $cantAudAC registros de auditorias a Central.	  
+<br />Se replicaron $cantHabilitaciones habilitaciones.
+<br />Se replicaron $cantCertificadosCCCF Certificados CCCF.
     <br /> Se recibieron $hmInstalaciones instalaciones. 
  	  </p>";
 ?>

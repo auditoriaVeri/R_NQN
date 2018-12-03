@@ -1,5 +1,6 @@
 <?php
-function formatFecha($cadFecha){
+function formatFecha($cadFecha)
+{
 	if($cadFecha != "")
 	{
 		$cadFecha = str_replace("/","-",$cadFecha);
@@ -111,13 +112,13 @@ $timestamp2 = mktime(0,0,0,$mH,$dH,$yH);
 $segundos_diferencia = $timestamp1 - $timestamp2;
 //echo $segundos_diferencia;
 
-//convierto segundos en días
+//convierto segundos en dï¿½as
 $dias_diferencia = $segundos_diferencia / (60 * 60 * 24);
 
-//obtengo el valor absoulto de los días (quito el posible signo negativo)
+//obtengo el valor absoulto de los dï¿½as (quito el posible signo negativo)
 $dias_diferencia = abs($dias_diferencia);
 
-//quito los decimales a los días de diferencia
+//quito los decimales a los dï¿½as de diferencia
 $dias_diferencia = floor($dias_diferencia);
 
 return $dias_diferencia + 1;
@@ -142,12 +143,12 @@ return $intervalo->format('%a');
 function suma_fechas($fecha,$ndias)      
 {       
       if (preg_match("/[0-9]{1,2}\/[0-9]{1,2}\/([0-9][0-9]){1,2}/",$fecha))
-           list($dia,$mes,$año)=explode("/", $fecha);
+           list($dia,$mes,$aï¿½o)=explode("/", $fecha);
          
       if (preg_match("/[0-9]{1,2}-[0-9]{1,2}-([0-9][0-9]){1,2}/",$fecha))          
-      	list($dia,$mes,$año)=explode("-",$fecha);
+      	list($dia,$mes,$aï¿½o)=explode("-",$fecha);
       
-        $nueva = mktime(0,0,0, $mes,$dia,$año) + $ndias * 24 * 60 * 60;
+        $nueva = mktime(0,0,0, $mes,$dia,$aï¿½o) + $ndias * 24 * 60 * 60;
         $nuevafecha=date("Y-m-d",$nueva);
          
       return ($nuevafecha);
@@ -158,18 +159,18 @@ function compara_fechas($fecha1,$fecha2)
 {           
 
       if (preg_match("/[0-9]{1,2}\/[0-9]{1,2}\/([0-9][0-9]){1,2}/",$fecha1))
-              list($dia1,$mes1,$año1)=explode("/",$fecha1);            
+              list($dia1,$mes1,$aï¿½o1)=explode("/",$fecha1);            
 
       if (preg_match("/[0-9]{1,2}-[0-9]{1,2}-([0-9][0-9]){1,2}/",$fecha1))
-              list($dia1,$mes1,$año1)=explode("-",$fecha1);
+              list($dia1,$mes1,$aï¿½o1)=explode("-",$fecha1);
               
       if (preg_match("/[0-9]{1,2}\/[0-9]{1,2}\/([0-9][0-9]){1,2}/",$fecha2))
-              list($dia2,$mes2,$año2)=explode("/",$fecha2);
+              list($dia2,$mes2,$aï¿½o2)=explode("/",$fecha2);
 
       if (preg_match("/[0-9]{1,2}-[0-9]{1,2}-([0-9][0-9]){1,2}/",$fecha2))
-              list($dia2,$mes2,$año2)=explode("-",$fecha2);
+              list($dia2,$mes2,$aï¿½o2)=explode("-",$fecha2);
               
-        $dif = mktime(0,0,0,$mes1,$dia1,$año1) - mktime(0,0,0, $mes2,$dia2,$año2);
+        $dif = mktime(0,0,0,$mes1,$dia1,$aï¿½o1) - mktime(0,0,0, $mes2,$dia2,$aï¿½o2);
         
         return ($dif);
 }
