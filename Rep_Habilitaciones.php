@@ -31,16 +31,17 @@ if ($continua)
     /***** Por cada equipo vamos a ver si esta el server => update, si no esta => insert ****/
     foreach ($respVer as $row)
     {
+
+      $idHabilitacion = $row['idHabilitacion'];
+
       // Acá no hay update mierda
-      $ComandoSQL = "DELETE FROM habilitacion WHERE idHabilitacion = " . $row['idHabilitacion'];
-      $respVer = $base->query($sql);
+      $ComandoSQL = "DELETE FROM habilitacion WHERE idHabilitacion = " . $idHabilitacion;
+      $respVer = $base->query($ComandoSQL);
       if (!$respVer) {
         $msnlog = "Ocurrio un error al guardar las habilitaciones en taller PASO 1.";
         $continua = false;
         break;
       }
-
-      $idHabilitacion = $row['idHabilitacion'];
 
       // Armando los servicios
       $sql =

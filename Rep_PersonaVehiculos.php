@@ -9,6 +9,7 @@ $msnlog = "";
 /* Para que nos e corte la ejecucion por timeout */
 set_time_limit(0);
 
+
 try {
   //$dbUNC = new PDO('mysql:host=vtvunc.ddns.net;dbname=vehicularunc;charset=utf8', 'usrRem', 'eureRemoto');
  //wewe

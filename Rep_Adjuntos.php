@@ -148,22 +148,45 @@ if($continua){
 			//Aca deberia copíar el archivo al servidor de central, si todo sale bien
 			$archivo_local = "/var/www/html/tnqn17veritecnica/uploads/".$rowTV["arTarjetaVerde"];
 			$archivo_remoto = $rowTV["arTarjetaVerde"];
-			if(SubirArchivo($archivo_local,$archivo_remoto))
-			{
-				$sql = "UPDATE vehiculos SET ReplicoArchivoTV = 1 WHERE Dominio = '".$rowTV["Dominio"]."'";
-				if(!$base->query($sql)){
-					/**** SI OCURRIO UN ERROR CORTAMOS EL PROCESO *****/
-					$msnlog = "Ocurrio un al marcar como replicado un adjunto de TV en taller. - Taller: $nomTaller";
-					$continua = false;
-					break;
-				}
-			}
-			else{
-				/**** SI OCURRIO UN ERROR CORTAMOS EL PROCESO *****/
-				$msnlog = "Ocurrio un error al cargar los archivos adjuntos de las tarjetas verdes en central. Taller: $nomTaller";
-				$continua = false;
-				break;
-			}
+
+      $AE= ArchivoExistente($archivo_remoto);
+
+/*      echo "<br/>";
+      echo $archivo_remoto;
+      echo "Existente: "; echo $AE;*/
+
+      if ($AE != 1)
+      {
+        if (SubirArchivo($archivo_local, $archivo_remoto))
+        {
+          $sql = "UPDATE vehiculos SET ReplicoArchivoTV = 1 WHERE Dominio = '" . $rowTV["Dominio"] . "'";
+          if (!$base->query($sql))
+          {
+            /**** SI OCURRIO UN ERROR CORTAMOS EL PROCESO *****/
+            $msnlog = "Ocurrio un al marcar como replicado un adjunto de TV en taller. - Taller: $nomTaller";
+            $continua = false;
+            break;
+          }
+        } else
+        {
+          /**** SI OCURRIO UN ERROR CORTAMOS EL PROCESO *****/
+          $msnlog = "Ocurrio un error al cargar los archivos adjuntos de las tarjetas verdes en central. Taller: $nomTaller";
+          $continua = false;
+          break;
+        }
+      }
+      else
+      {
+        // esta queriendo subir otra vez el mismo
+        $sql = "UPDATE vehiculos SET ReplicoArchivoTV = 1 WHERE Dominio = '" . $rowTV["Dominio"] . "'";
+        if (!$base->query($sql))
+        {
+          /**** SI OCURRIO UN ERROR CORTAMOS EL PROCESO *****/
+          $msnlog = "Ocurrio un al marcar como replicado un adjunto de TV en taller. - Taller: $nomTaller";
+          $continua = false;
+          break;
+        }
+      }
 		}/* *** cierra el foreach */
 	}else{
 		/**** SI OCURRIO UN ERROR CORTAMOS EL PROCESO *****/

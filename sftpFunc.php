@@ -29,3 +29,26 @@ $host = "vtvunc.ddns.net";
 
   return $salida;
 }
+
+function ArchivoExistente($archivo_remoto)
+{
+
+$host = "vtvunc.ddns.net";
+  $puerto = 22;
+  $usuario = "usrftp";
+  $password = "v8276TA";
+  $raiz = "files/";
+
+  $salida = true;
+
+  $conexion = new conexionSFTP($host, $puerto, $usuario, $password);
+  if ($conexion->conectar())
+  {
+    if ($conexion->exists($raiz .$archivo_remoto))
+      $salida = true;
+    else
+      $salida = false;
+    }
+
+  return $salida;
+}
