@@ -73,133 +73,226 @@ if($continua){
 
 
 
-if($continua){
+if($continua)
+{
 	$sql = " SELECT * FROM verificaciones WHERE Replicado = 0 ";
 	$respVer = $base->query($sql);
-	if($respVer){
+	if($respVer)
+	{
 		/***** Por cada verificaciones vamos a ver si esta el server => update, si no esta => insert ****/
 		foreach ($respVer as $row)
 		{		
 			$sqlSer = "SELECT * FROM verificaciones WHERE idVerificacion = ".$row["idVerificacion"]." AND 
 							idTaller = ".$row["idTaller"];
-			if($respServ = $dbUNC->query($sqlSer)){
-				
-				if($row["NroDocConductor"] == "") $row["NroDocConductor"] = 'NULL';
-				if($row["Eje1_Tara"] == "") $row["Eje1_Tara"] = 'NULL';
-				if($row["Eje2_Tara"] == "") $row["Eje2_Tara"] = 'NULL';
-				if($row["Eje3_Tara"] == "") $row["Eje3_Tara"] = 'NULL';
-				if($row["Eje4_Tara"] == "") $row["Eje4_Tara"] = 'NULL';
-				if($row["Eje5_Tara"] == "") $row["Eje5_Tara"] = 'NULL';
-				if($row["Eje1_FzaIzq"] == "") $row["Eje1_FzaIzq"] = 'NULL';
-				if($row["Eje2_FzaIzq"] == "") $row["Eje2_FzaIzq"] = 'NULL';
-				if($row["Eje3_FzaIzq"] == "") $row["Eje3_FzaIzq"] = 'NULL';
-				if($row["Eje4_FzaIzq"] == "") $row["Eje4_FzaIzq"] = 'NULL';
-				if($row["Eje5_FzaIzq"] == "") $row["Eje5_FzaIzq"] = 'NULL';
-				if($row["Eje1_FzaDer"] == "") $row["Eje1_FzaDer"] = 'NULL';
-				if($row["Eje2_FzaDer"] == "") $row["Eje2_FzaDer"] = 'NULL';
-				if($row["Eje3_FzaDer"] == "") $row["Eje3_FzaDer"] = 'NULL';
-				if($row["Eje4_FzaDer"] == "") $row["Eje4_FzaDer"] = 'NULL';
-				if($row["Eje5_FzaDer"] == "") $row["Eje5_FzaDer"] = 'NULL';
-				if($row["Eje1_Dif"] == "") $row["Eje1_Dif"] = 'NULL';
-				if($row["Eje2_Dif"] == "") $row["Eje2_Dif"] = 'NULL';
-				if($row["Eje3_Dif"] == "") $row["Eje3_Dif"] = 'NULL';
-				if($row["Eje4_Dif"] == "") $row["Eje4_Dif"] = 'NULL';
-				if($row["Eje5_Dif"] == "") $row["Eje5_Dif"] = 'NULL';
-				if($row["Eje1_Eficiencia"] == "") $row["Eje1_Eficiencia"] = 'NULL';
-				if($row["Eje2_Eficiencia"] == "") $row["Eje2_Eficiencia"] = 'NULL';
-				if($row["Eje3_Eficiencia"] == "") $row["Eje3_Eficiencia"] = 'NULL';
-				if($row["Eje4_Eficiencia"] == "") $row["Eje4_Eficiencia"] = 'NULL';
-				if($row["Eje5_Eficiencia"] == "") $row["Eje5_Eficiencia"] = 'NULL';
-				if($row["Interior"] == "") $row["Interior"] = 'NULL';
-				if($row["Escape"] == "") $row["Escape"] = 'NULL';
-				if($row["Bach"] == "") $row["Bach"] = 'NULL';
-				if($row["PorcentajeCo"] == "") $row["PorcentajeCo"] = 'NULL';
-				if($row["Opac"] == "") $row["Opac"] = 'NULL';
-				if($row["ppmHC"] == "") $row["ppmHC"] = 'NULL';
-				if($row["Freno_FzaIsq"] == "") $row["Freno_FzaIsq"] = 'NULL';
-				if($row["Freno_FzaDer"] == "") $row["Freno_FzaDer"] = 'NULL';
-				if($row["Freno_Dif"] == "") $row["Freno_Dif"] = 'NULL';
-				if($row["Freno_Eficiencia"] == "") $row["Freno_Eficiencia"] = 'NULL';
-				if($row["Susp_FzaIsq"] == "") $row["Susp_FzaIsq"] = 'NULL';
-				if($row["Susp_FzaDer"] == "") $row["Susp_FzaDer"] = 'NULL';
-				if($row["Susp_Dif"] == "") $row["Susp_Dif"] = 'NULL';
-				if($row["Susp_Eficiencia"] == "") $row["Susp_Eficiencia"] = 'NULL';
-				if($row["MotorAnio"] == "") $row["MotorAnio"] = 'NULL';
-				if($row["VAnio"] == "") $row["VAnio"] = 'NULL';
-				if($row["ChasisAnio"] == "") $row["ChasisAnio"] = 'NULL';
-				if($row["VPotencia"] == "") $row["VPotencia"] = 'NULL';
-				if($row["VCaja"] == "") $row["VCaja"] = 'NULL';
-				if($row["Tara"] == "") $row["Tara"] = 'NULL';
-				if($row["PesoMax"] == "") $row["PesoMax"] = 'NULL';
-				if($row["CargaUtil"] == "") $row["CargaUtil"] = 'NULL';
-				if($row["Asientos"] == "") $row["Asientos"] = 'NULL';
-				if($row["idLocTMServ"] == "") $row["idLocTMServ"] = 'NULL';
-				if($row["idTipoServicio"] == "") $row["idTipoServicio"] = 'NULL';
-				if($row["idClaseServicio"] == "") $row["idClaseServicio"] = 'NULL';
-				if($row["PNroDoc"] == "") $row["PNroDoc"] = 'NULL';
-				if($row["PidLocalidad"] == "") $row["PidLocalidad"] = 'NULL';
-				if($row["NroInterno"] == "") $row["NroInterno"] = 'NULL';
-				if($row["idTipoUso"] == "") $row["idTipoUso"] = 'NULL';
-				if($row["idVerificacionOriginal"] == "") $row["idVerificacionOriginal"] = 'NULL';
-				
-				if($respServ->rowCount() > 0)	
-				{	
-					$sqlInSer ="UPDATE verificaciones SET Reverificacion = ".$row["Reverificacion"].",idEstado = ".$row["idEstado"].", FechaHoraRep = NOW() WHERE idVerificacion = ".$row["idVerificacion"]." AND idTaller = ".$row["idTaller"];				
-				}else{
+			if($respServ = $dbUNC->query($sqlSer))
+			{
+				if($respServ->rowCount() == 0)
+        {
+          $ComandoSQL= "
+            INSERT INTO verificaciones
+            (idVerificacion, Fecha, Hora, HoraFinal, idTaller, idFotovalidacion, DominioVehiculo, idHabilitacion, codigoHabilitacion, ChasisNro, MotorAnio, MotorMarca, MotorNumero, idLocalidadVehiculo, TipoDocConductor, NroDocConductor, NombreConductor, ApellidoConductor, Reverificacion, idVerificacionOriginal, Inspector, DirectorTecnico, idEstado, Eje1_Tara, Eje2_Tara, Eje3_Tara, Eje4_Tara, Eje1_FzaIzq, Eje2_FzaIzq, Eje3_FzaIzq, Eje4_FzaIzq, Eje1_FzaDer, Eje2_FzaDer, Eje3_FzaDer, Eje4_FzaDer, Eje1_Dif, Eje2_Dif, Eje3_Dif, Eje4_Dif, Eje1_Eficiencia, Eje2_Eficiencia, Eje3_Eficiencia, Eje4_Eficiencia, Eje5_Tara, Eje5_FzaIzq, Eje5_FzaDer, Eje5_Dif, Eje5_Eficiencia, Alineacion, NivelSonoro, Interior, 
+            Escape, 
+            Bach, PorcentajeCo, Opac, ppmHC, Freno_FzaIsq, Freno_FzaDer, Freno_Dif, Freno_Eficiencia, CCCF, MarcaTac, NroTac, RodadoTac, NroInterno, CodigoTitular, DescripcionTitular, Susp_FzaIsq, Susp_FzaDer, Susp_Dif, Susp_Eficiencia, Observaciones, CompaniaSeguro, NroPoliza, UltimoRecPatente, idTipoUso, usuarioCarga, idTipoVehiculo, VMarca, VModelo, VAnio, ChasisMarca, ChasisAnio, TipoCombustible, VPotencia, NroEjes, VCaja, PocisionMotor, AnioFabricacion, Carroceria, Expediente, AireAco, Bar, Banio, Calefaccion, Suspencion, Tara, PesoMax, CargaUtil, Asientos, idLocTMServ, TipoServTM, idTipoServicio, idClaseServicio, prestadorServ, CuitPrestServ, PTipoDoc, PNroDoc, PCuit, PDomicilio, PTelefono, PEmail, PidLocalidad, PTipoPersona, FechaHoraRep, TipoCarga, PCodigoPJ, CertificadoDiscapacidad, Firma, nroFactura)
+            VALUES
+            (:idVerificacion, :Fecha, :Hora, :HoraFinal, :idTaller, :idFotovalidacion, :DominioVehiculo, :idHabilitacion, :codigoHabilitacion, :ChasisNro, :MotorAnio, :MotorMarca, :MotorNumero, :idLocalidadVehiculo, :TipoDocConductor, :NroDocConductor, :NombreConductor, :ApellidoConductor, :Reverificacion, :idVerificacionOriginal, :Inspector, :DirectorTecnico, :idEstado, :Eje1_Tara, :Eje2_Tara, :Eje3_Tara, :Eje4_Tara, :Eje1_FzaIzq, :Eje2_FzaIzq, :Eje3_FzaIzq, :Eje4_FzaIzq, :Eje1_FzaDer, :Eje2_FzaDer, :Eje3_FzaDer, :Eje4_FzaDer, :Eje1_Dif, :Eje2_Dif, :Eje3_Dif, :Eje4_Dif, :Eje1_Eficiencia, :Eje2_Eficiencia, :Eje3_Eficiencia, :Eje4_Eficiencia, :Eje5_Tara, :Eje5_FzaIzq, :Eje5_FzaDer, :Eje5_Dif, :Eje5_Eficiencia, :Alineacion, :NivelSonoro, :Interior, 
+            :Escape, 
+            :Bach, :PorcentajeCo, :Opac, :ppmHC, :Freno_FzaIsq, :Freno_FzaDer, :Freno_Dif, :Freno_Eficiencia, :CCCF, :MarcaTac, :NroTac, :RodadoTac, :NroInterno, :CodigoTitular, :DescripcionTitular, :Susp_FzaIsq, :Susp_FzaDer, :Susp_Dif, :Susp_Eficiencia, :Observaciones, :CompaniaSeguro, :NroPoliza, :UltimoRecPatente, :idTipoUso, :usuarioCarga, :idTipoVehiculo, :VMarca, :VModelo, :VAnio, :ChasisMarca, :ChasisAnio, :TipoCombustible, :VPotencia, :NroEjes, :VCaja, :PocisionMotor, :AnioFabricacion, :Carroceria, :Expediente, :AireAco, :Bar, :Banio, :Calefaccion, :Suspencion, :Tara, :PesoMax, :CargaUtil, :Asientos, :idLocTMServ, :TipoServTM, :idTipoServicio, :idClaseServicio, :prestadorServ, :CuitPrestServ, :PTipoDoc, :PNroDoc, :PCuit, :PDomicilio, :PTelefono, :PEmail, :PidLocalidad, :PTipoPersona, :FechaHoraRep, :TipoCarga, :PCodigoPJ, :CertificadoDiscapacidad, :Firma, :nroFactura)";
+
+          $SSQL= $dbUNC->prepare($ComandoSQL);
+
+          // Binds
+          //<editor-fold desc="Binds">
+          $SSQL->bindValue(':idVerificacion', $row["idVerificacion"]);
+          $SSQL->bindValue(':Fecha', $row["Fecha"]);
+          $SSQL->bindValue(':Hora', $row["Hora"]);
+          $SSQL->bindValue(':HoraFinal', $row["HoraFinal"]);
+          $SSQL->bindValue(':idTaller', $row["idTaller"]);
+          $SSQL->bindValue(':idFotovalidacion', $row["idFotovalidacion"]);
+          $SSQL->bindValue(':DominioVehiculo', $row["DominioVehiculo"]);
+          $SSQL->bindValue(':idHabilitacion', $row["idHabilitacion"]);
+          $SSQL->bindValue(':codigoHabilitacion', $row["codigoHabilitacion"]);
+          $SSQL->bindValue(':ChasisNro', $row["ChasisNro"]);
+          $SSQL->bindValue(':MotorAnio', $row["MotorAnio"]);
+          $SSQL->bindValue(':MotorMarca', $row["MotorMarca"]);
+          $SSQL->bindValue(':MotorNumero', $row["MotorNumero"]);
+          $SSQL->bindValue(':idLocalidadVehiculo', $row["idLocalidadVehiculo"]);
+          $SSQL->bindValue(':TipoDocConductor', $row["TipoDocConductor"]);
+          $SSQL->bindValue(':NroDocConductor', $row["NroDocConductor"]);
+          $SSQL->bindValue(':NombreConductor', $row["NombreConductor"]);
+          $SSQL->bindValue(':ApellidoConductor', $row["ApellidoConductor"]);
+          $SSQL->bindValue(':Reverificacion', $row["Reverificacion"]);
+          $SSQL->bindValue(':idVerificacionOriginal', $row["idVerificacionOriginal"]);
+          $SSQL->bindValue(':Inspector', $row["Inspector"]);
+          $SSQL->bindValue(':DirectorTecnico', $row["DirectorTecnico"]);
+          $SSQL->bindValue(':idEstado', $row["idEstado"]);
+          $SSQL->bindValue(':Eje1_Tara', $row["Eje1_Tara"]);
+          $SSQL->bindValue(':Eje2_Tara', $row["Eje2_Tara"]);
+          $SSQL->bindValue(':Eje3_Tara', $row["Eje3_Tara"]);
+          $SSQL->bindValue(':Eje4_Tara', $row["Eje4_Tara"]);
+          $SSQL->bindValue(':Eje1_FzaIzq', $row["Eje1_FzaIzq"]);
+          $SSQL->bindValue(':Eje2_FzaIzq', $row["Eje2_FzaIzq"]);
+          $SSQL->bindValue(':Eje3_FzaIzq', $row["Eje3_FzaIzq"]);
+          $SSQL->bindValue(':Eje4_FzaIzq', $row["Eje4_FzaIzq"]);
+          $SSQL->bindValue(':Eje1_FzaDer', $row["Eje1_FzaDer"]);
+          $SSQL->bindValue(':Eje2_FzaDer', $row["Eje2_FzaDer"]);
+          $SSQL->bindValue(':Eje3_FzaDer', $row["Eje3_FzaDer"]);
+          $SSQL->bindValue(':Eje4_FzaDer', $row["Eje4_FzaDer"]);
+          $SSQL->bindValue(':Eje1_Dif', $row["Eje1_Dif"]);
+          $SSQL->bindValue(':Eje2_Dif', $row["Eje2_Dif"]);
+          $SSQL->bindValue(':Eje3_Dif', $row["Eje3_Dif"]);
+          $SSQL->bindValue(':Eje4_Dif', $row["Eje4_Dif"]);
+          $SSQL->bindValue(':Eje1_Eficiencia', $row["Eje1_Eficiencia"]);
+          $SSQL->bindValue(':Eje2_Eficiencia', $row["Eje2_Eficiencia"]);
+          $SSQL->bindValue(':Eje3_Eficiencia', $row["Eje3_Eficiencia"]);
+          $SSQL->bindValue(':Eje4_Eficiencia', $row["Eje4_Eficiencia"]);
+          $SSQL->bindValue(':Eje5_Tara', $row["Eje5_Tara"]);
+          $SSQL->bindValue(':Eje5_FzaIzq', $row["Eje5_FzaIzq"]);
+          $SSQL->bindValue(':Eje5_FzaDer', $row["Eje5_FzaDer"]);
+          $SSQL->bindValue(':Eje5_Dif', $row["Eje5_Dif"]);
+          $SSQL->bindValue(':Eje5_Eficiencia', $row["Eje5_Eficiencia"]);
+          $SSQL->bindValue(':Alineacion', $row["Alineacion"]);
+          $SSQL->bindValue(':NivelSonoro', $row["NivelSonoro"]);
+          $SSQL->bindValue(':Interior', $row["Interior"]);
+          $SSQL->bindValue(':Escape', $row["Escape"]);
+          $SSQL->bindValue(':Bach', $row["Bach"]);
+          $SSQL->bindValue(':PorcentajeCo', $row["PorcentajeCo"]);
+          $SSQL->bindValue(':Opac', $row["Opac"]);
+          $SSQL->bindValue(':ppmHC', $row["ppmHC"]);
+          $SSQL->bindValue(':Freno_FzaIsq', $row["Freno_FzaIsq"]);
+          $SSQL->bindValue(':Freno_FzaDer', $row["Freno_FzaDer"]);
+          $SSQL->bindValue(':Freno_Dif', $row["Freno_Dif"]);
+          $SSQL->bindValue(':Freno_Eficiencia', $row["Freno_Eficiencia"]);
+          $SSQL->bindValue(':CCCF', $row["CCCF"]);
+          $SSQL->bindValue(':MarcaTac', $row["MarcaTac"]);
+          $SSQL->bindValue(':NroTac', $row["NroTac"]);
+          $SSQL->bindValue(':RodadoTac', $row["RodadoTac"]);
+          $SSQL->bindValue(':NroInterno', $row["NroInterno"]);
+          $SSQL->bindValue(':CodigoTitular', $row["CodigoTitular"]);
+          $SSQL->bindValue(':DescripcionTitular', $row["DescripcionTitular"]);
+          $SSQL->bindValue(':Susp_FzaIsq', $row["Susp_FzaIsq"]);
+          $SSQL->bindValue(':Susp_FzaDer', $row["Susp_FzaDer"]);
+          $SSQL->bindValue(':Susp_Dif', $row["Susp_Dif"]);
+          $SSQL->bindValue(':Susp_Eficiencia', $row["Susp_Eficiencia"]);
+          $SSQL->bindValue(':Observaciones', $row["Observaciones"]);
+          $SSQL->bindValue(':CompaniaSeguro', $row["CompaniaSeguro"]);
+          $SSQL->bindValue(':NroPoliza', $row["NroPoliza"]);
+          $SSQL->bindValue(':UltimoRecPatente', $row["UltimoRecPatente"]);
+          $SSQL->bindValue(':idTipoUso', $row["idTipoUso"]);
+          $SSQL->bindValue(':usuarioCarga', $row["usuarioCarga"]);
+          $SSQL->bindValue(':idTipoVehiculo', $row["idTipoVehiculo"]);
+          $SSQL->bindValue(':VMarca', $row["VMarca"]);
+          $SSQL->bindValue(':VModelo', $row["VModelo"]);
+          $SSQL->bindValue(':VAnio', $row["VAnio"]);
+          $SSQL->bindValue(':ChasisMarca', $row["ChasisMarca"]);
+          $SSQL->bindValue(':ChasisAnio', $row["ChasisAnio"]);
+          $SSQL->bindValue(':TipoCombustible', $row["TipoCombustible"]);
+          $SSQL->bindValue(':VPotencia', $row["VPotencia"]);
+          $SSQL->bindValue(':NroEjes', $row["NroEjes"]);
+          $SSQL->bindValue(':VCaja', $row["VCaja"]);
+          $SSQL->bindValue(':PocisionMotor', $row["PocisionMotor"]);
+          $SSQL->bindValue(':AnioFabricacion', $row["AnioFabricacion"]);
+          $SSQL->bindValue(':Carroceria', $row["Carroceria"]);
+          $SSQL->bindValue(':Expediente', $row["Expediente"]);
+          $SSQL->bindValue(':AireAco', $row["AireAco"]);
+          $SSQL->bindValue(':Bar', $row["Bar"]);
+          $SSQL->bindValue(':Banio', $row["Banio"]);
+          $SSQL->bindValue(':Calefaccion', $row["Calefaccion"]);
+          $SSQL->bindValue(':Suspencion', $row["Suspencion"]);
+          $SSQL->bindValue(':Tara', $row["Tara"]);
+          $SSQL->bindValue(':PesoMax', $row["PesoMax"]);
+          $SSQL->bindValue(':CargaUtil', $row["CargaUtil"]);
+          $SSQL->bindValue(':Asientos', $row["Asientos"]);
+          $SSQL->bindValue(':idLocTMServ', $row["idLocTMServ"]);
+          $SSQL->bindValue(':TipoServTM', $row["TipoServTM"]);
+          $SSQL->bindValue(':idTipoServicio', $row["idTipoServicio"]);
+          $SSQL->bindValue(':idClaseServicio', $row["idClaseServicio"]);
+          $SSQL->bindValue(':prestadorServ', $row["prestadorServ"]);
+          $SSQL->bindValue(':CuitPrestServ', $row["CuitPrestServ"]);
+          $SSQL->bindValue(':PTipoDoc', $row["PTipoDoc"]);
+          $SSQL->bindValue(':PNroDoc', $row["PNroDoc"]);
+          $SSQL->bindValue(':PCuit', $row["PCuit"]);
+          $SSQL->bindValue(':PDomicilio', $row["PDomicilio"]);
+          $SSQL->bindValue(':PTelefono', $row["PTelefono"]);
+          $SSQL->bindValue(':PEmail', $row["PEmail"]);
+          $SSQL->bindValue(':PidLocalidad', $row["PidLocalidad"]);
+          $SSQL->bindValue(':PTipoPersona', $row["PTipoPersona"]);
+          $SSQL->bindValue(':FechaHoraRep', $row["FechaHoraRep"]);
+          $SSQL->bindValue(':TipoCarga', $row["TipoCarga"]);
+          $SSQL->bindValue(':PCodigoPJ', $row["PCodigoPJ"]);
+          $SSQL->bindValue(':CertificadoDiscapacidad', $row["CertificadoDiscapacidad"]);
+          $SSQL->bindValue(':Firma', $row["Firma"]);
+          $SSQL->bindValue(':nroFactura', $row["nroFactura"]);
+          //</editor-fold>
+        }
+				else
+        {
+          $ComandoSQL= "
+            UPDATE verificaciones
+            SET
+              Reverificacion= :Reverificacion, idEstado= :idEstado, FechaHoraRep = NOW(), Firma= :Firma
+            WHERE
+              idVerificacion = :idVerificacion AND
+              idTaller = :idTaller";
+
+          $SSQL= $dbUNC->prepare($ComandoSQL);
+
+          // Binds
+          //<editor-fold desc="Binds">
+          $SSQL->bindValue(':idVerificacion', $row["idVerificacion"]);
+          $SSQL->bindValue(':idTaller', $row["idTaller"]);
+          $SSQL->bindValue(':idEstado', $row["idEstado"]);
+          $SSQL->bindValue(':Firma', $row["Firma"]);
+          $SSQL->bindValue(':Reverificacion', $row["Reverificacion"]);
+
+				}
 					
-					$sqlInSer = "INSERT INTO verificaciones(idVerificacion,idTaller,Fecha,Hora,DominioVehiculo,ChasisNro,MotorNumero,CodigoTitular,DescripcionTitular,
-					TipoDocConductor,NroDocConductor,NombreConductor,ApellidoConductor,Inspector,DirectorTecnico,idEstado,Eje1_Tara,
-						Eje2_Tara,Eje3_Tara,Eje4_Tara,Eje1_FzaIzq,Eje2_FzaIzq,Eje3_FzaIzq,Eje4_FzaIzq,Eje1_FzaDer,Eje2_FzaDer,Eje3_FzaDer,
-						Eje4_FzaDer,Eje1_Dif,Eje2_Dif,Eje3_Dif,Eje4_Dif,Eje1_Eficiencia,Eje2_Eficiencia,Eje3_Eficiencia,Eje4_Eficiencia,
-						Alineacion,NivelSonoro,Interior,Escape,Bach,PorcentajeCo,Opac,ppmHC,Freno_FzaIsq,Freno_FzaDer,Freno_Dif,Freno_Eficiencia,
-						Susp_FzaIsq,Susp_FzaDer,Susp_Dif,Susp_Eficiencia,CCCF,Observaciones,CompaniaSeguro,NroPoliza,UltimoRecPatente,
-						MotorAnio,MotorMarca,idLocalidadVehiculo,MarcaTac,NroTac,NroInterno,idTipoUso,
-						Eje5_Tara,Eje5_FzaIzq,Eje5_FzaDer,Eje5_Dif,Eje5_Eficiencia,idTipoVehiculo,VMarca,VModelo,
-						VAnio,ChasisMarca,ChasisAnio,TipoCombustible,VPotencia,NroEjes,VCaja,PocisionMotor,Carroceria,Expediente,AireAco,
-						Bar,Banio,Calefaccion,Suspencion,Tara,PesoMax,CargaUtil,Asientos,idLocTMServ,TipoServTM,idTipoServicio,idClaseServicio,
-						PTipoDoc,PTipoPersona,PNroDoc,PCuit,PDomicilio,PTelefono,PEmail,PidLocalidad,usuarioCarga,TipoCarga,idVerificacionOriginal,
-Reverificacion,PCodigoPJ, idHabilitacion, codigoHabilitacion)  
-						VALUES 
-						(".$row["idVerificacion"].",".$row["idTaller"].",'".$row["Fecha"]."','".$row["Hora"]."','".$row["DominioVehiculo"]."',
-						  '".$row["ChasisNro"]."','".$row["MotorNumero"]."','".$row["CodigoTitular"]."','".addslashes($row["DescripcionTitular"])."',
-						 '".$row["TipoDocConductor"]."',".$row["NroDocConductor"].",'".addslashes($row["NombreConductor"])."','".addslashes($row["ApellidoConductor"])."',
-						 '".addslashes($row["Inspector"])."','".addslashes($row["DirectorTecnico"])."',".$row["idEstado"].",".$row["Eje1_Tara"].",
-						".$row["Eje2_Tara"].",".$row["Eje3_Tara"].",".$row["Eje4_Tara"].",".$row["Eje1_FzaIzq"].",".$row["Eje2_FzaIzq"].",
-						".$row["Eje3_FzaIzq"].",".$row["Eje4_FzaIzq"].",".$row["Eje1_FzaDer"].",".$row["Eje2_FzaDer"].",".$row["Eje3_FzaDer"].",
-						".$row["Eje4_FzaDer"].",".$row["Eje1_Dif"].",".$row["Eje2_Dif"].",".$row["Eje3_Dif"].",".$row["Eje4_Dif"].",".$row["Eje1_Eficiencia"].
-						",".$row["Eje2_Eficiencia"].",".$row["Eje3_Eficiencia"].",".$row["Eje4_Eficiencia"].",'".$row["Alineacion"]."','".$row["NivelSonoro"]."',
-						".$row["Interior"].",".$row["Escape"].",".$row["Bach"].",".$row["PorcentajeCo"].
-						",".$row["Opac"].",".$row["ppmHC"].",".$row["Freno_FzaIsq"].",".$row["Freno_FzaDer"].",".$row["Freno_Dif"].",".$row["Freno_Eficiencia"].
-						",".$row["Susp_FzaIsq"].",".$row["Susp_FzaDer"].",".$row["Susp_Dif"].",".$row["Susp_Eficiencia"].",'".addslashes($row["CCCF"])."','".addslashes($row["Observaciones"]).
-						"','".addslashes($row["CompaniaSeguro"])."','".addslashes($row["NroPoliza"])."','".addslashes($row["UltimoRecPatente"])."',".$row["MotorAnio"].",'".addslashes($row["MotorMarca"]).
-						"',".$row["idLocalidadVehiculo"].",'".addslashes($row["MarcaTac"])."','".addslashes($row["NroTac"])."','".$row["NroInterno"]."',".$row["idTipoUso"].",".
-						$row["Eje5_Tara"].",".$row["Eje5_FzaIzq"].",".$row["Eje5_FzaDer"].",".$row["Eje5_Dif"].",".$row["Eje5_Eficiencia"].",".$row["idTipoVehiculo"].",'".
-						addslashes($row["VMarca"])."','".addslashes($row["VModelo"])."','".$row["VAnio"]."','".addslashes($row["ChasisMarca"])."','".$row["ChasisAnio"]."','".$row["TipoCombustible"]."','".$row["VPotencia"].
-						"',".$row["NroEjes"].",'".$row["VCaja"]."','".$row["PocisionMotor"]."','".addslashes($row["Carroceria"])."','".addslashes($row["Expediente"])."',".$row["AireAco"].",
-						".$row["Bar"].",".$row["Banio"].",".$row["Calefaccion"].",'".$row["Suspencion"]."',".$row["Tara"].",".$row["PesoMax"].",".$row["CargaUtil"].","
-						.$row["Asientos"].",".$row["idLocTMServ"].",'".$row["TipoServTM"]."',".$row["idTipoServicio"].",".$row["idClaseServicio"].",'".$row["PTipoDoc"]
-						."','".$row["PTipoPersona"]."',".$row["PNroDoc"].",'".$row["PCuit"]."','".addslashes($row["PDomicilio"])."','".$row["PTelefono"]."','".addslashes($row["PEmail"]).
-						"',".$row["PidLocalidad"].",'".$row["usuarioCarga"]."','".$row["TipoCarga"]."',".$row["idVerificacionOriginal"].",".$row["Reverificacion"].",'".$row["PCodigoPJ"]."'," . $row["idHabilitacion"] . ", '" . $row['codigoHabilitacion'] . "'" . ")";
-				}
-				//echo $sqlInSer."<br />";
-				if($dbUNC->query($sqlInSer)){		
-					/**** una vez que cargue en server, le indico en el taller que ya fue replicado ****/		
-					$sql = "UPDATE verificaciones SET Replicado = 1 WHERE idVerificacion = ".$row["idVerificacion"]." AND idTaller = ".$row["idTaller"];
-					if(!$base->query($sql)){
-						/**** SI OCURRIO UN ERROR CORTAMOS EL PROCESO *****/
-						$msnlog = "Ocurrio un al marcar como replicado una verificacion en taller. - Taller: $nomTaller";
-						$continua = false;
-						break;
-					}else{
-						$cantVeraC++;
-					}
-				}
-				else{
-					/**** SI OCURRIO UN ERROR CORTAMOS EL PROCESO *****/
-					$msnlog = "Ocurrio un error al cargar las verificaciones en central. Taller: $nomTaller";
-					$continua = false;
-					break;
-				}
+
+        //</editor-fold>
+
+
+        try
+        {
+          $Res = $SSQL->execute();
+
+          if (!$Res)
+          {
+            echo "Error al replicar verificacion " . $row["idVerificacion"] . "<br />";
+
+            print_r($SSQL->errorInfo());
+            exit();
+          }
+
+          // Ahora a marcar como replicado
+          $ComandoSQL = " 
+            UPDATE verificaciones
+            SET
+              Replicado= 1
+            WHERE              
+              idVerificacion = :idVerificacion AND
+              idTaller = :idTaller";
+
+          $SSQL = $base->prepare($ComandoSQL);
+
+          $SSQL->bindValue(':idVerificacion', $row["idVerificacion"]);
+          $SSQL->bindValue(':idTaller', $row["idTaller"]);
+
+          $Res = $SSQL->execute();
+
+
+          if (!$Res)
+          {
+            print_r($SSQL->errorInfo());
+            exit();
+          }
+
+
+          $cantVeraC++;
+        }
+        catch (Exception $e)
+        {
+          exit("ERROR");
+          throw $e;
+        }
 			}
 			else{
 					/**** SI OCURRIO UN ERROR CORTAMOS EL PROCESO *****/
@@ -209,72 +302,234 @@ Reverificacion,PCodigoPJ, idHabilitacion, codigoHabilitacion)
 				}
 			
 		}
-	}else{
-	$msnlog = "Error al intentar leer los datos de las verificaciones en la base del Taller: $nomTaller";
-	$continua = false;
 	}
-}
-if($continua){
-	$sql = " SELECT * FROM certificados WHERE Replicado = 0 ";
-	$respCert = $base->query($sql);
-	if($respCert){
-	/***** Por cada certificado vamos a ver si esta el server => update, si no esta => insert ****/
-		foreach ($respCert as $row)
-		{		
-			
-			$sqlSer = "SELECT * FROM certificados WHERE idCertificado = ".$row["idCertificado"]." AND idTaller = ".$row["idTaller"];
-			if($respServ = $dbUNC->query($sqlSer)){
-				if($row["porcentajeCategoria"] == "") $row["porcentajeCategoria"] = 'NULL';
-				if($row["idCategoria"] == "") $row["idCategoria"] = 'NULL';
-				
-				if($respServ->rowCount() > 0)	
-				{	
-					$sqlInSer ="UPDATE certificados SET idEstado = ".$row["idEstado"].",Anulado = ".$row["Anulado"].",
-					         FechaAnulacion='".$row["FechaAnulacion"]."',Observaciones = '".$row["Observaciones"]."', 
-					         Vencido = ".$row["Vencido"].", Reverificado = ".$row["Reverificado"].", FechaHoraRep = NOW() 
-					  		WHERE idVerificacion = ".$row["idVerificacion"]." AND idTaller = ".$row["idTaller"];				
-				}else{
-					
-					$sqlInSer = "INSERT INTO certificados(idCertificado,idTaller,NroCertificado,Fecha,Hora,idEstado,VigenciaHasta,
-										idVerificacion,idCategoria,porcentajeCategoria,Anulado,FechaAnulacion,Observaciones,Auditoria,Vencido,Reverificado) 
-										VALUES 
-								(".$row["idCertificado"].",".$row["idTaller"].",".$row["NroCertificado"].",'".$row["Fecha"].
-								"','".$row["Hora"]."',".$row["idEstado"].",'".$row["VigenciaHasta"]."',".$row["idVerificacion"].
-								",".$row["idCategoria"].",".$row["porcentajeCategoria"].",".$row["Anulado"].",'".$row["FechaAnulacion"]."',
-								'".$row["Observaciones"]."','".$row["Auditoria"]."',".$row["Vencido"].",".$row["Reverificado"].")";
-				}
-				//echo $sqlInSer;
-				if($dbUNC->query($sqlInSer)){		
-					/**** una vez que cargue en server, le indico en el taller que ya fue replicado ****/		
-					$sql = "UPDATE certificados SET Replicado = 1 WHERE idCertificado = ".$row["idCertificado"]." AND idTaller = ".$row["idTaller"];
-					if(!$base->query($sql)){
-						/**** SI OCURRIO UN ERROR CORTAMOS EL PROCESO *****/
-						$msnlog = "Ocurrio un al marcar como replicado un certificado en taller. - Taller: $nomTaller";
-						$continua = false;
-						break;
-					}else{
-						$cantCeraC++;
-					}
-				}
-				else{
-					/**** SI OCURRIO UN ERROR CORTAMOS EL PROCESO *****/
-					$msnlog = "Ocurrio un error al cargar los certificados en central. Taller: $nomTaller";
-					$continua = false;
-					break;
-				}
-			}
-			else{
-					/**** SI OCURRIO UN ERROR CORTAMOS EL PROCESO *****/
-					$msnlog = "Ocurrio un error al buscar certificados en central.";
-					$continua = false;
-					break;
-				}
-			
-		}
-	}else{
-	$msnlog = "Error al intentar leer los datos de los certificados en la base del Taller: $nomTaller";
-	$continua = false;
-	}
+	else
+  {
+    $msnlog = "Error al intentar leer los datos de las verificaciones en la base del Taller: $nomTaller";
+    $continua = false;
+  }
 }
 
+/********* VERIFICACIONESSERVICIOS *************/
+if ($continua)
+{
+  $sql = " SELECT * FROM verificacionesservicios WHERE Replicado = 0 ";
+  $respVer = $base->query($sql);
+
+  foreach ($respVer as $RVServ)
+  {
+    $ComandoSQL =
+      " SELECT COUNT(*) as HM  
+        FROM verificacionesservicios
+        WHERE
+          idVerificacionesServicios	= :idVerificacionesServicios	 AND 
+          idTaller = :idTaller";
+
+    $SSQL = $dbUNC->prepare($ComandoSQL);
+
+    $SSQL->bindValue(':idVerificacionesServicios	', $RVServ["idVerificacionesServicios"]);
+    $SSQL->bindValue(':idTaller', $RVServ["idTaller"]);
+
+    $Res = $SSQL->execute();  // Para ver si anduvo pero no le doy bola
+    $R = $SSQL->fetch();
+
+    $HM = $R["HM"];
+
+    if ($HM == 0)
+    {
+      $ComandoSQL = "
+            INSERT INTO verificacionesservicios
+            (
+                idVerificacionesServicios, idVerificacion, idTaller, idServicio, fechaHoraRep
+            ) 
+            VALUES            
+	          ( 
+	              :idVerificacionesServicios, :idVerificacion, :idTaller, :idServicio, now()
+	          )";
+    }
+    else
+    {
+      $ComandoSQL =
+        " UPDATE verificacionesservicios
+	          SET        		  
+              idVerificacion= :idVerificacion,
+              idServicio= :idServicio,
+              fechaHoraRep= NOW()
+	          WHERE 
+	            idVerificacionesServicios = :idVerificacionesServicios AND
+	            idTaller =:idTaller";
+    }
+
+    // A ejecutar
+    $SSQL = $dbUNC->prepare($ComandoSQL);
+
+    $SSQL->bindValue(':idVerificacionesServicios', $RVServ["idVerificacionesServicios"]);
+    $SSQL->bindValue(':idVerificacion', $RVServ["idVerificacion"]);
+    $SSQL->bindValue(':idTaller', $RVServ["idTaller"]);
+    $SSQL->bindValue(':idServicio', $RVServ["idServicio"]);
+
+    try
+    {
+      $Res = $SSQL->execute();
+
+      if (!$Res)
+      {
+        print_r($SSQL->errorInfo());
+        exit();
+      }
+    } catch (Exception $e)
+    {
+      $continua = false;
+      exit("ERROR");
+      throw $e;
+    }
+
+    // Ahora a marcar como replicado
+    $ComandoSQL = "
+          UPDATE verificacionesservicios 
+          SET
+            Replicado= 1
+          WHERE
+            idVerificacionesServicios= :idVerificacionesServicios AND
+	          idTaller= :idTaller";
+
+    $SSQL = $base->prepare($ComandoSQL);
+
+    $SSQL->bindValue(':idVerificacionesServicios', $RVServ["idVerificacionesServicios"]);
+    $SSQL->bindValue(':idTaller', $RVServ["idTaller"]);
+
+    $Res = $SSQL->execute();
+    if (!$Res)
+    {
+      print_r($SSQL->errorInfo());
+      exit();
+    }
+    else
+      $cantVerificacionesServicios++;
+
+  } // foreach
+}
+
+
+if($continua)
+{
+  $sql = " SELECT * FROM certificados WHERE Replicado = 0 ";
+  $respCert = $base->query($sql);
+  if ($respCert)
+  {
+    /***** Por cada certificado vamos a ver si esta el server => update, si no esta => insert ****/
+    foreach ($respCert as $RCert)
+    {
+      $sqlSer = "SELECT * FROM certificados WHERE idCertificado = " . $RCert["idCertificado"] . " AND idTaller = " . $RCert["idTaller"];
+      $respServ = $dbUNC->query($sqlSer);
+      if ($respServ)
+      {
+        if ($respServ->rowCount() == 0)
+        {
+          $ComandoSQL = "
+					  INSERT INTO certificados
+					  (
+					    idCertificado, NroCertificado, Fecha, Hora, idTaller, idEstado, VigenciaHasta, idVerificacion, idConvenio, Anulado, FechaAnulacion, Observaciones, Auditoria, Serie, idCategoria, porcentajeCategoria, FechaHoraRep, Vencido, Reverificado
+					  )
+					  VALUES
+					  (
+					    :idCertificado, :NroCertificado, :Fecha, :Hora, :idTaller, :idEstado, :VigenciaHasta, :idVerificacion, :idConvenio, :Anulado, :FechaAnulacion, :Observaciones, :Auditoria, :Serie, :idCategoria, :porcentajeCategoria, NOW(), :Vencido, :Reverificado
+					  )";
+
+          // A ejecutar
+          $SSQL = $dbUNC->prepare($ComandoSQL);
+
+          $SSQL->bindValue(':idCertificado', $RCert["idCertificado"]);
+          $SSQL->bindValue(':NroCertificado', $RCert["NroCertificado"]);
+          $SSQL->bindValue(':Fecha', $RCert["Fecha"]);
+          $SSQL->bindValue(':Hora', $RCert["Hora"]);
+          $SSQL->bindValue(':idTaller', $RCert["idTaller"]);
+          $SSQL->bindValue(':idEstado', $RCert["idEstado"]);
+          $SSQL->bindValue(':VigenciaHasta', $RCert["VigenciaHasta"]);
+          $SSQL->bindValue(':idVerificacion', $RCert["idVerificacion"]);
+          $SSQL->bindValue(':idConvenio', $RCert["idConvenio"]);
+          $SSQL->bindValue(':Anulado', $RCert["Anulado"]);
+          $SSQL->bindValue(':FechaAnulacion', $RCert["FechaAnulacion"]);
+          $SSQL->bindValue(':Observaciones', $RCert["Observaciones"]);
+          $SSQL->bindValue(':Auditoria', $RCert["Auditoria"]);
+          $SSQL->bindValue(':Serie', $RCert["Serie"]);
+          $SSQL->bindValue(':idCategoria', $RCert["idCategoria"]);
+          $SSQL->bindValue(':porcentajeCategoria', $RCert["porcentajeCategoria"]);
+          $SSQL->bindValue(':Vencido', $RCert["Vencido"]);
+          $SSQL->bindValue(':Reverificado', $RCert["Reverificado"]);
+
+        }
+        else
+        {
+          $ComandoSQL = " 
+            UPDATE certificados
+            SET
+              idEstado= :idEstado,
+              Anulado= :Anulado, 
+              FechaAnulacion= :FechaAnulacion,
+              Observaciones= :Observaciones, 
+              Vencido= :Vencido, 
+              Reverificado= :Reverificado, 
+              FechaHoraRep = NOW() 
+            WHERE 
+              idVerificacion = :idVerificacion AND 
+              idTaller = :idTaller";
+
+          // A ejecutar
+          $SSQL = $dbUNC->prepare($ComandoSQL);
+
+          $SSQL->bindValue(':idVerificacion', $RCert["idVerificacion"]);
+          $SSQL->bindValue(':idTaller', $RCert["idTaller"]);
+          $SSQL->bindValue(':idEstado', $RCert["idEstado"]);
+          $SSQL->bindValue(':Anulado', $RCert["Anulado"]);
+          $SSQL->bindValue(':FechaAnulacion', $RCert["FechaAnulacion"]);
+          $SSQL->bindValue(':Observaciones', $RCert["Observaciones"]);
+          $SSQL->bindValue(':Vencido', $RCert["Vencido"]);
+          $SSQL->bindValue(':Reverificado', $RCert["Reverificado"]);
+
+        }
+
+        try
+        {
+          $Res = $SSQL->execute();
+
+          if (!$Res)
+          {
+            print_r($SSQL->errorInfo());
+            exit();
+          }
+        } catch (Exception $e)
+        {
+          $continua = false;
+          exit("ERROR");
+          throw $e;
+        }
+
+
+        /**** una vez que cargue en server, le indico en el taller que ya fue replicado ****/
+        $sql = "UPDATE certificados SET Replicado = 1 WHERE idCertificado = " . $RCert["idCertificado"] . " AND idTaller = " . $RCert["idTaller"];
+        if (!$base->query($sql))
+        {
+          /**** SI OCURRIO UN ERROR CORTAMOS EL PROCESO *****/
+          $msnlog = "Ocurrio un al marcar como replicado un certificado en taller. - Taller: $nomTaller";
+          $continua = false;
+          break;
+        }
+        else
+        {
+          $cantCeraC++;
+        }
+      }
+      else
+      {
+        /**** SI OCURRIO UN ERROR CORTAMOS EL PROCESO *****/
+        $msnlog = "Ocurrio un error al buscar certificados en central. " . $sqlSer;
+        $continua = false;
+        break;
+      }
+
+    } // foreach
+
+  }
+}
 

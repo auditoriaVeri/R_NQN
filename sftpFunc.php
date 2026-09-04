@@ -20,6 +20,7 @@ $host = "vtvunc.ddns.net";
     } else {
       $salida = false;
       echo "No ha sido posible subir el fichero $archivo_local <br />";
+      print_r($conexion->errors);
     }
   } else {
     $salida = false;
@@ -52,3 +53,4 @@ $host = "vtvunc.ddns.net";
 
   return $salida;
 }
+//force sftyo

@@ -73,7 +73,7 @@ if ($continua)
           "    historialModificacion, dominio, marcaVehiculo, modeloVehiculo, idLocalidadVehiculo, nombreTitular, " .
           "    apellidoTitular, domicilioTitular, idLocalidadTitular, nombreConductor, apellidoConductor, domicilioConductor, " .
           "    idLocalidadConductor, usuarioDictamen, fechaHoraDictamen, tipoDocTitular, nroDocTitular, tipoPersona, " .
-          "     razonSocialTitular, cuitTitular, idTipoServicio, serviciosHabilitados" .
+          "     razonSocialTitular, cuitTitular, idTipoServicio, serviciosHabilitados, NroCertificadoCCCF" .
           " )" .
           " VALUES" .
           " (" .
@@ -85,7 +85,8 @@ if ($continua)
           $row['apellidoConductor'] . "', '" . $row['domicilioConductor'] . "', " . $row['idLocalidadConductor'] . ", '" .
           $row['usuarioDictamen'] . "', '" . $row['fechaHoraDictamen'] . "', '" . $row['tipoDocTitular'] . "', '" .
           $row['nroDocTitular'] . "', '" . $row['tipoPersona'] . "', '" . $row['razonSocialTitular'] . "', '" .
-          $row['cuitTitular'] . "', " . $row['idTipoServicio'] . ", '" . $ServiciosHabilitados . "'" .
+          $row['cuitTitular'] . "', " . $row['idTipoServicio'] . ", '" . $ServiciosHabilitados . "', '" .
+          $row['NroCertificadoCCCF'] . "'" .
           " )";
 
         // echo $ComandoSQL;exit();
@@ -111,7 +112,9 @@ if ($continua)
     }
 
 
-  } else {
+  }
+  else
+  {
     /**** SI OCURRIO UN ERROR CORTAMOS EL PROCESO *****/
     $msnlog = "Ocurrio un error al buscar habilitaciones para replicar.";
     $continua = false;

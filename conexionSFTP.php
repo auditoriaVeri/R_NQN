@@ -66,6 +66,7 @@ class conexionSFTP {
 
   function put_contents($file, $contents, $mode = false) {
     $ret = $this->link->put($file, $contents);
+    $this->errors= $this->link->getSFTPErrors();
     $this->chmod($file, $mode);
     return false !== $ret;
   }

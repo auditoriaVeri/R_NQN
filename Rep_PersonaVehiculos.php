@@ -1,7 +1,7 @@
 <?php
 
 require_once('PDOConfig.php');
-require_once("sftpFunc.php");
+// require_once("sftpFunc.php");
 require_once('utilidades.php');
 $mensaje = "";
 $msnlog = "";
@@ -9,12 +9,19 @@ $msnlog = "";
 /* Para que nos e corte la ejecucion por timeout */
 set_time_limit(0);
 
+function SubirArchivo($archivo_local, $archivo_remoto) {
+  return true;
+}
 
-try {
-  //$dbUNC = new PDO('mysql:host=vtvunc.ddns.net;dbname=vehicularunc;charset=utf8', 'usrRem', 'eureRemoto');
- //wewe
-  //wewew
-  $dbUNC = new PDO('mysql:host=localhost;dbname=uncrto_centralnqn;charset=utf8', 'root', 'eurePass');
+function ArchivoExistente($archivo_remoto)
+{
+	return false;
+}
+
+try 
+{
+  $dbUNC = new PDO('mysql:host=vtvunc.ddns.net;dbname=vehicularunc;charset=utf8', 'usrRem', 'rtovtv*');
+
 } catch (Exception $e) {
   echo $e->getMessage();
   exit();
@@ -22,8 +29,8 @@ try {
 
 //$dbUNC = new PDO('mysql:host=localhost;dbname=vehicularunc;charset=utf8', 'root', '');
 $base = new PDOConfig();
-$idTaller = 1111117;
-$nomTaller = "Veritecnica SRL";
+$idTaller = 18;
+$nomTaller = "Control SRL";
 $usu = "replicación automatica";
 $cantPaC = 0;
 $cantVaC = 0;
@@ -34,14 +41,27 @@ $cantCeraC = 0;
 $cantEquiposAC = 0;
 $cantMantEqAC = 0;
 $cantAudAC = 0;
-$cantDefectosEnVerificaciones= 0;
+$cantDefectos= 0;
 $actTaller = 0;
 $actDT = 0;
 $actINS = 0;
 $cantHabilitaciones= 0;
+$cantEmpresasCCCF= 0;
 $cantCertificadosCCCF= 0;
 $obleasEnv = 0;
 $obleasRec = 0;
+$cantNCs= 0;
+$cantExcepciones= 0;
+$cantPendientes= 0;
+$cantPendientesDefectos= 0;
+$cantAdjuntosPendientes= 0;
+$cantPendientesServicios= 0;
+$cantFotoValidaciones= 0;
+$cantAdjuntosExcepciones= 0;
+$cantVerificacionesServicios= 0;
+$cantVerificacionesPDF= 0;
+
+
 
 $msnlog = "Inicia Replicaci&oacute;n - Taller: $nomTaller. (" . Date('d/m/Y H:i') . ")";
 echo $msnlog;
@@ -51,6 +71,7 @@ $sqlRep = " INSERT INTO replicacionlogs(idTaller,Usuario,FechaHora,Observaciones
 $respUNC = $dbUNC->query($sqlRep);
 $respUNC = $base->query($sqlRep);
 $continua = true;
+$UploadsBasePath= "/var/www/html/taller/uploads/";
 
 /* * *************************** EXPORTAR DEL TALLER AL SERVER ******************** */
 /* * ************* Vamos a buscar los datos del taller que deberiamos replicar ************* */
@@ -115,121 +136,164 @@ if ($respPersonas) {
   $continua = false;
 }
 
+
 /* * *****************SI TERMINAMOS DE CARGAR LAS PERSONAS CORRECTAMENTE ************************ */
 if ($continua) {
   /*   * *** buscamos en el taller los vehivulos que no se han replicado *** */
   $sql = " SELECT * FROM vehiculos WHERE Replicado = 0 ";
   $respVehiculos = $base->query($sql);
-  if ($respVehiculos) {
 
-    foreach ($respVehiculos as $rowV) {
+  if ($respVehiculos)
+  {
+    foreach ($respVehiculos as $rowV)
+    {
       /*       * *** Por cada vehiculo vamos a ver si esta el server => update, si no esta => insert *** */
       $sqlSer = "SELECT * FROM vehiculos WHERE Dominio = '" . $rowV["Dominio"] . "' ";
-      if ($respServ = $dbUNC->query($sqlSer)) {
 
-        if ($rowV["idTipoVehiculo"] == "")
-          $rowV["idTipoVehiculo"] = 'NULL';
-        if ($rowV["Anio"] == "")
-          $rowV["Anio"] = 'NULL';
-        if ($rowV["idLocalidad"] == "")
-          $rowV["idLocalidad"] = 'NULL';
-        if ($rowV["MotorAnio"] == "")
-          $rowV["MotorAnio"] = 'NULL';
-        if ($rowV["ChasisAnio"] == "")
-          $rowV["ChasisAnio"] = 'NULL';
-        if ($rowV["NroEjes"] == "")
-          $rowV["NroEjes"] = 'NULL';
-        if ($rowV["idTipoUso"] == "")
-          $rowV["idTipoUso"] = 'NULL';
-        if ($rowV["Tara"] == "")
-          $rowV["Tara"] = 'NULL';
-        if ($rowV["PesoMax"] == "")
-          $rowV["PesoMax"] = 'NULL';
-        if ($rowV["CargaUtil"] == "")
-          $rowV["CargaUtil"] = 'NULL';
-        if ($rowV["Asientos"] == "")
-          $rowV["Asientos"] = 'NULL';
-        if ($rowV["idLocTMServ"] == "")
-          $rowV["idLocTMServ"] = 'NULL';
-        if ($rowV["idTipoServicio"] == "")
-          $rowV["idTipoServicio"] = 'NULL';
-        if ($rowV["idClaseServicio"] == "")
-          $rowV["idClaseServicio"] = 'NULL';
-        if ($rowV["NroInterno"] == "")
-          $rowV["NroInterno"] = 'NULL';
-        if ($rowV["idCategoria"] == "")
-          $rowV["idCategoria"] = 'NULL';
-        if($rowV["arTarjetaVerde"] == "") 
-        {	
-            $rowV["arTarjetaVerde"] = 'NULL';					
-        }
-        else{
-            $cargarArchiTV = true;
-            $rowV["arTarjetaVerde"] = "'".$rowV["arTarjetaVerde"] ."'";
-        }
+      $respServ = $dbUNC->query($sqlSer); // sin el if de control, no lo veo necesario
 
-        if ($respServ->rowCount() > 0) {
-          $sqlInSer = "UPDATE vehiculos SET idTipoVehiculo = " . $rowV["idTipoVehiculo"] . ",Marca = '" . addslashes($rowV["Marca"]) . "',
-                Modelo='" . addslashes($rowV["Modelo"]) . "',Anio = " . $rowV["Anio"] . ",idLocalidad = " . $rowV["idLocalidad"] . ",
-                MotorMarca = '" . addslashes($rowV["MotorMarca"]) . "',MotorNro = '" . addslashes($rowV["MotorNro"]) . "',MotorAnio = " . $rowV["MotorAnio"] . ",
-                ChasisMarca = '" . addslashes($rowV["ChasisMarca"]) . "',ChasisNro = '" . addslashes($rowV["ChasisNro"]) . "',ChasisAnio = " . $rowV["ChasisAnio"] . ",
-                TacografoMarca = '" . addslashes($rowV["TacografoMarca"]) . "',TacografoNro = '" . addslashes($rowV["TacografoNro"]) . "',CCCF='" . addslashes($rowV["CCCF"]) . "',
-                TipoCombustible = '" . addslashes($rowV["TipoCombustible"]) . "',Pot = '" . addslashes($rowV["Pot"]) . "',NroEjes = " . $rowV["NroEjes"] . ",
-                idTipoUso = " . $rowV["idTipoUso"] . ",Caja = '" . addslashes($rowV["Caja"]) . "',PocisionMotor = '" . addslashes($rowV["PocisionMotor"]) . "',
-                Carroceria = '" . addslashes($rowV["Carroceria"]) . "',Expediente = '" . addslashes($rowV["Expediente"]) . "',AireAco=" . $rowV["AireAco"] . ",
-                Bar = " . $rowV["Bar"] . ",Banio = " . $rowV["Banio"] . ",Calefaccion = " . $rowV["Calefaccion"] . ",Suspencion = '" . addslashes($rowV["Suspencion"]) . "',
-                Tara = " . $rowV["Tara"] . ",PesoMax = " . $rowV["PesoMax"] . ",CargaUtil = " . $rowV["CargaUtil"] . ",Asientos = " . $rowV["Asientos"] . ",
-                CodigoTitular = '" . $rowV["CodigoTitular"] . "',idLocTMServ = " . $rowV["idLocTMServ"] . ",TipoServTM = '" . addslashes($rowV["TipoServTM"]) . "',
-                idTipoServicio = " . $rowV["idTipoServicio"] . ",idClaseServicio = " . $rowV["idClaseServicio"] . ",NroInterno = '" . $rowV["NroInterno"] . "',
-                CompaniaSeguro = '" . addslashes($rowV["CompaniaSeguro"]) . "',NroPoliza = '" . addslashes($rowV["NroPoliza"]) . "',UltimoRecPatente='" . addslashes($rowV["UltimoRecPatente"]) . "',
-                idCategoria = " . $rowV["idCategoria"] . ",FechaHoraServ = NOW(),PatenteMercosur=" . $rowV["PatenteMercosur"] . ",arTarjetaVerde=". $rowV["arTarjetaVerde"] . " WHERE Dominio = '" . $rowV["Dominio"] . "'";
-        } else {
-          $sqlInSer = "INSERT INTO vehiculos(Dominio,idTipoVehiculo,Marca,Modelo,Anio,idLocalidad,MotorMarca,MotorNro,MotorAnio,
-              ChasisMarca,ChasisNro,ChasisAnio,TacografoMarca,TacografoNro,CCCF,TipoCombustible,Pot,NroEjes,idTipoUso,Caja,
-              PocisionMotor,Carroceria,Expediente,AireAco,Bar,Banio,Calefaccion,Suspencion,Tara,PesoMax,CargaUtil,Asientos,
-              CodigoTitular,idLocTMServ,TipoServTM,idTipoServicio,idClaseServicio,NroInterno,CompaniaSeguro,NroPoliza,UltimoRecPatente,
-              idCategoria,FechaHoraServ,PatenteMercosur,arTarjetaVerde) VALUES
-                       ('" . $rowV["Dominio"] . "'," . $rowV["idTipoVehiculo"] . ",'" . addslashes($rowV["Marca"]) . "','" . addslashes($rowV["Modelo"]) . "'," . $rowV["Anio"] . ",
-                      " . $rowV["idLocalidad"] . ",'" . addslashes($rowV["MotorMarca"]) . "','" . addslashes($rowV["MotorNro"]) . "'," . $rowV["MotorAnio"] . ",'" . addslashes($rowV["ChasisMarca"]) . "',
-                      '" . addslashes($rowV["ChasisNro"]) . "'," . $rowV["ChasisAnio"] . ",'" . addslashes($rowV["TacografoMarca"]) . "','" . addslashes($rowV["TacografoNro"]) . "','" . addslashes($rowV["CCCF"]) . "',
-                      '" . addslashes($rowV["TipoCombustible"]) . "','" . addslashes($rowV["Pot"]) . "'," . $rowV["NroEjes"] . "," . $rowV["idTipoUso"] . ",'" . addslashes($rowV["Caja"]) . "',
-                      '" . addslashes($rowV["PocisionMotor"]) . "','" . addslashes($rowV["Carroceria"]) . "','" . addslashes($rowV["Expediente"]) . "'," . $rowV["AireAco"] . "," . $rowV["Bar"] . ",
-                      " . $rowV["Banio"] . "," . $rowV["Calefaccion"] . ",'" . addslashes($rowV["Suspencion"]) . "'," . $rowV["Tara"] . "," . $rowV["PesoMax"] . "," . $rowV["CargaUtil"] . ",
-                      " . $rowV["Asientos"] . ",'" . addslashes($rowV["CodigoTitular"]) . "'," . $rowV["idLocTMServ"] . ",'" . addslashes($rowV["TipoServTM"]) . "'," . $rowV["idTipoServicio"] . ",
-                      " . $rowV["idClaseServicio"] . ",'" . $rowV["NroInterno"] . "','" . addslashes($rowV["CompaniaSeguro"]) . "','" . addslashes($rowV["NroPoliza"]) . "','" . addslashes($rowV["UltimoRecPatente"]) . "',
-                      " . $rowV["idCategoria"] . ",NOW()," . $rowV["PatenteMercosur"] . "," . $rowV["arTarjetaVerde"] . ")";
-        }
-        //echo $sqlInSer;
-        if ($dbUNC->query($sqlInSer)) {
-          /*           * ** una vez que cargue en server, le indico en el taller que ya fue replicado *** */
-          $sql = "UPDATE vehiculos SET Replicado = 1 WHERE Dominio = '" . $rowV["Dominio"] . "'";
-          if (!$base->query($sql)) {
-            /*             * ** SI OCURRIO UN ERROR CORTAMOS EL PROCESO **** */
-            $msnlog = "Ocurrio un al marcar como replicado un vehiculo en taller. - Taller: $nomTaller";
-            $continua = false;
-            break;
-          } else {
-            $cantVaC++;
-          }
-        } else {
-          /*           * ** SI OCURRIO UN ERROR CORTAMOS EL PROCESO **** */
-          $msnlog = "Ocurrio un error al cargar un vehiculo en central. Taller: $nomTaller ";
-          $continua = false;
-          break;
-        }
-      } else {
-        /*         * ** SI OCURRIO UN ERROR CORTAMOS EL PROCESO **** */
-        $msnlog = "Ocurrio un error al buscar un vehiculo en central.";
-        $continua = false;
-        break;
+      if ($respServ->rowCount() == 0)
+      {
+        $ComandoSQL =
+          "INSERT INTO vehiculos
+            (Dominio, idTipoVehiculo, Marca, Modelo, Anio, idLocalidad, MotorMarca, MotorNro, MotorAnio, ChasisMarca, ChasisNro, ChasisAnio, TacografoMarca, TacografoNro, TacografoRodado, CCCF, TipoCombustible, Pot, NroEjes, idTipoUso, Caja, PocisionMotor, AnioFabricacion, Carroceria, Expediente, AireAco, Bar, Banio, Calefaccion, Suspencion, Tara, PesoMax, CargaUtil, Asientos, CodigoTitular, idLocTMServ, TipoServTM, idTipoServicio, tiposServicios, idHabilitacion, codigoHabilitacion, idClaseServicio, prestadorServ, CuitPrestServ, NroInterno, CompaniaSeguro, NroPoliza, UltimoRecPatente, idCategoria, FechaHoraServ, TipoCarga, CertificadoDiscapacidad, PatenteMercosur, TipoDocConductor, NroDocConductor, NombreConductor, ApellidoConductor, DomicilioConductor, LocalidadConductor, FechaActualizacion, arTarjetaVerde, esReverificacion, idVerificacionOriginal, Status, idTallerVerif, nroFactura, Activo)
+          VALUES
+              (:Dominio, :idTipoVehiculo, :Marca, :Modelo, :Anio, :idLocalidad, :MotorMarca, :MotorNro, :MotorAnio, :ChasisMarca, :ChasisNro, :ChasisAnio, :TacografoMarca, :TacografoNro, :TacografoRodado, :CCCF, :TipoCombustible, :Pot, :NroEjes, :idTipoUso, :Caja, :PocisionMotor, :AnioFabricacion, :Carroceria, :Expediente, :AireAco, :Bar, :Banio, :Calefaccion, :Suspencion, :Tara, :PesoMax, :CargaUtil, :Asientos, :CodigoTitular, :idLocTMServ, :TipoServTM, :idTipoServicio, :tiposServicios, :idHabilitacion, :codigoHabilitacion, :idClaseServicio, :prestadorServ, :CuitPrestServ, :NroInterno, :CompaniaSeguro, :NroPoliza, :UltimoRecPatente, :idCategoria, NOW(), :TipoCarga, :CertificadoDiscapacidad, :PatenteMercosur, :TipoDocConductor, :NroDocConductor, :NombreConductor, :ApellidoConductor, :DomicilioConductor, :LocalidadConductor, :FechaActualizacion, :arTarjetaVerde, :esReverificacion, :idVerificacionOriginal, :Status, :idTallerVerif, :nroFactura, :Activo)";
       }
-    }/*     * ******* Cierra el foreach ****************** */
-  } else {
+      else
+      {
+        $ComandoSQL = "
+          UPDATE vehiculos
+          SET
+            idTipoVehiculo= :idTipoVehiculo, Marca= :Marca, Modelo= :Modelo, Anio= :Anio, idLocalidad= :idLocalidad, MotorMarca= :MotorMarca, MotorNro= :MotorNro, MotorAnio= :MotorAnio, ChasisMarca= :ChasisMarca, ChasisNro= :ChasisNro, ChasisAnio= :ChasisAnio, TacografoMarca= :TacografoMarca, TacografoNro= :TacografoNro, TacografoRodado= :TacografoRodado, CCCF= :CCCF, TipoCombustible= :TipoCombustible, Pot= :Pot, NroEjes= :NroEjes, idTipoUso= :idTipoUso, Caja= :Caja, PocisionMotor= :PocisionMotor, AnioFabricacion= :AnioFabricacion, Carroceria= :Carroceria, Expediente= :Expediente, AireAco= :AireAco, Bar= :Bar, Banio= :Banio, Calefaccion= :Calefaccion, Suspencion= :Suspencion, Tara= :Tara, PesoMax= :PesoMax, CargaUtil= :CargaUtil, Asientos= :Asientos, CodigoTitular= :CodigoTitular, idLocTMServ= :idLocTMServ, TipoServTM= :TipoServTM, idTipoServicio= :idTipoServicio, tiposServicios= :tiposServicios, idHabilitacion= :idHabilitacion, codigoHabilitacion= :codigoHabilitacion, idClaseServicio= :idClaseServicio, prestadorServ= :prestadorServ, CuitPrestServ= :CuitPrestServ, NroInterno= :NroInterno, CompaniaSeguro= :CompaniaSeguro, NroPoliza= :NroPoliza, UltimoRecPatente= :UltimoRecPatente, idCategoria= :idCategoria, FechaHoraServ= NOW(), TipoCarga= :TipoCarga, CertificadoDiscapacidad= :CertificadoDiscapacidad, PatenteMercosur= :PatenteMercosur, TipoDocConductor= :TipoDocConductor, NroDocConductor= :NroDocConductor, NombreConductor= :NombreConductor, ApellidoConductor= :ApellidoConductor, DomicilioConductor= :DomicilioConductor, LocalidadConductor= :LocalidadConductor, FechaActualizacion= :FechaActualizacion, arTarjetaVerde= :arTarjetaVerde, esReverificacion= :esReverificacion, idVerificacionOriginal= :idVerificacionOriginal, Status= :Status, idTallerVerif= :idTallerVerif, nroFactura= :nroFactura, Activo= :Activo
+          WHERE
+            Dominio= :Dominio";
+      }
+
+      $SSQL = $dbUNC->prepare($ComandoSQL);
+
+
+      // Binds
+      //<editor-fold desc="Binds">
+      $SSQL->bindValue(':Dominio', $rowV["Dominio"]);
+      $SSQL->bindValue(':idTipoVehiculo', $rowV["idTipoVehiculo"]);
+      $SSQL->bindValue(':Marca', $rowV["Marca"]);
+      $SSQL->bindValue(':Modelo', $rowV["Modelo"]);
+      $SSQL->bindValue(':Anio', $rowV["Anio"]);
+      $SSQL->bindValue(':idLocalidad', $rowV["idLocalidad"]);
+      $SSQL->bindValue(':MotorMarca', $rowV["MotorMarca"]);
+      $SSQL->bindValue(':MotorNro', $rowV["MotorNro"]);
+      $SSQL->bindValue(':MotorAnio', $rowV["MotorAnio"]);
+      $SSQL->bindValue(':ChasisMarca', $rowV["ChasisMarca"]);
+      $SSQL->bindValue(':ChasisNro', $rowV["ChasisNro"]);
+      $SSQL->bindValue(':ChasisAnio', $rowV["ChasisAnio"]);
+      $SSQL->bindValue(':TacografoMarca', $rowV["TacografoMarca"]);
+      $SSQL->bindValue(':TacografoNro', $rowV["TacografoNro"]);
+      $SSQL->bindValue(':TacografoRodado', $rowV["TacografoRodado"]);
+      $SSQL->bindValue(':CCCF', $rowV["CCCF"]);
+      $SSQL->bindValue(':TipoCombustible', $rowV["TipoCombustible"]);
+      $SSQL->bindValue(':Pot', $rowV["Pot"]);
+      $SSQL->bindValue(':NroEjes', $rowV["NroEjes"]);
+      $SSQL->bindValue(':idTipoUso', $rowV["idTipoUso"]);
+      $SSQL->bindValue(':Caja', $rowV["Caja"]);
+      $SSQL->bindValue(':PocisionMotor', $rowV["PocisionMotor"]);
+      $SSQL->bindValue(':AnioFabricacion', $rowV["AnioFabricacion"]);
+      $SSQL->bindValue(':Carroceria', $rowV["Carroceria"]);
+      $SSQL->bindValue(':Expediente', $rowV["Expediente"]);
+      $SSQL->bindValue(':AireAco', $rowV["AireAco"]);
+      $SSQL->bindValue(':Bar', $rowV["Bar"]);
+      $SSQL->bindValue(':Banio', $rowV["Banio"]);
+      $SSQL->bindValue(':Calefaccion', $rowV["Calefaccion"]);
+      $SSQL->bindValue(':Suspencion', $rowV["Suspencion"]);
+      $SSQL->bindValue(':Tara', $rowV["Tara"]);
+      $SSQL->bindValue(':PesoMax', $rowV["PesoMax"]);
+      $SSQL->bindValue(':CargaUtil', $rowV["CargaUtil"]);
+      $SSQL->bindValue(':Asientos', $rowV["Asientos"]);
+      $SSQL->bindValue(':CodigoTitular', $rowV["CodigoTitular"]);
+      $SSQL->bindValue(':idLocTMServ', $rowV["idLocTMServ"]);
+      $SSQL->bindValue(':TipoServTM', $rowV["TipoServTM"]);
+      $SSQL->bindValue(':idTipoServicio', $rowV["idTipoServicio"]);
+      $SSQL->bindValue(':tiposServicios', $rowV["tiposServicios"]);
+      $SSQL->bindValue(':idHabilitacion', $rowV["idHabilitacion"]);
+      $SSQL->bindValue(':codigoHabilitacion', $rowV["codigoHabilitacion"]);
+      $SSQL->bindValue(':idClaseServicio', $rowV["idClaseServicio"]);
+      $SSQL->bindValue(':prestadorServ', $rowV["prestadorServ"]);
+      $SSQL->bindValue(':CuitPrestServ', $rowV["CuitPrestServ"]);
+      $SSQL->bindValue(':NroInterno', $rowV["NroInterno"]);
+      $SSQL->bindValue(':CompaniaSeguro', $rowV["CompaniaSeguro"]);
+      $SSQL->bindValue(':NroPoliza', $rowV["NroPoliza"]);
+      $SSQL->bindValue(':UltimoRecPatente', $rowV["UltimoRecPatente"]);
+      $SSQL->bindValue(':idCategoria', $rowV["idCategoria"]);
+      $SSQL->bindValue(':TipoCarga', $rowV["TipoCarga"]);
+      $SSQL->bindValue(':CertificadoDiscapacidad', $rowV["CertificadoDiscapacidad"]);
+      $SSQL->bindValue(':PatenteMercosur', $rowV["PatenteMercosur"]);
+      $SSQL->bindValue(':TipoDocConductor', $rowV["TipoDocConductor"]);
+      $SSQL->bindValue(':NroDocConductor', $rowV["NroDocConductor"]);
+      $SSQL->bindValue(':NombreConductor', $rowV["NombreConductor"]);
+      $SSQL->bindValue(':ApellidoConductor', $rowV["ApellidoConductor"]);
+      $SSQL->bindValue(':DomicilioConductor', '');
+      $SSQL->bindValue(':LocalidadConductor', 0);
+      $SSQL->bindValue(':FechaActualizacion', $rowV["FechaActualizacion"]);
+      $SSQL->bindValue(':arTarjetaVerde', $rowV["arTarjetaVerde"]);
+      $SSQL->bindValue(':esReverificacion', $rowV["esReverificacion"]);
+      $SSQL->bindValue(':idVerificacionOriginal', $rowV["idVerificacionOriginal"]);
+      $SSQL->bindValue(':Status', $rowV["Status"]);
+      $SSQL->bindValue(':idTallerVerif', $rowV["idTallerVerif"]);
+      $SSQL->bindValue(':nroFactura', $rowV["nroFactura"]);
+      $SSQL->bindValue(':Activo', $rowV["Activo"]);
+      //</editor-fold>
+
+      try
+      {
+        $Res = $SSQL->execute();
+
+        if (!$Res)
+        {
+          echo "Error al replicar vehiculo " . $rowV["Dominio"] . "<br />";
+
+          print_r($SSQL->errorInfo());
+          exit();
+        }
+
+        // Ahora a marcar como replicado
+        $ComandoSQL = " 
+          UPDATE vehiculos
+          SET
+            Replicado= 1
+          WHERE
+            Dominio = :Dominio";
+
+        $SSQL = $base->prepare($ComandoSQL);
+
+        $SSQL->bindValue(':Dominio', $rowV["Dominio"]);
+
+        $Res = $SSQL->execute();
+
+
+        if (!$Res)
+        {
+
+          print_r($SSQL->errorInfo());
+          exit();
+        }
+
+
+        $cantVaC++;
+      } catch (Exception $e)
+      {
+        exit("ERROR");
+        throw $e;
+      }
+    }
+
+  }
+  else
+  {
     /*     * ** SI OCURRIO UN ERROR CORTAMOS EL PROCESO **** */
     $msnlog = "Error al intentar leer los datos de los vehiculos en la base del Taller: $nomTaller";
     $continua = false;
   }
-}/* * * cierra if continua * */
+}
 
 
 /* * **************************IMPORTAR DESDE EL SERVER AL TALLER*********************** */
@@ -274,7 +338,7 @@ if ($continua) {
                     '" . addslashes($row["RazonSocial"]) . "','" . $row["TipoPersona"] . "','" . addslashes($row["Email"]) . "'," . $row["idLocalidad"] .
                 ",'" . $row["FechaHoraServ"] . "',1,'" . $row["CodigoPJ"] . "')";
           }
-          //echo $sqlInTa;
+   //       echo $sqlInTa;exit;
           if (!$base->query($sqlInTa)) {
             /*             * ** SI OCURRIO UN ERROR CORTAMOS EL PROCESO **** */
             $msnlog = "Ocurrio un al cargar una persona en taller. - Taller: $nomTaller";
@@ -301,128 +365,159 @@ if ($continua) {
 
 
 /* * ************* Si todo salio bien vamos a buscar los vehiculos al server para traer al taller ****** */
-if ($continua) {
-  /*   * ************* Ahora buscamos los datos en el server que se deben actualizar en el taller ************* */
-  /*   * *** buscamos en el server los vehivulos que no se han replicado en el taller *** */
-  //veamos cual fue la ultima fecha que se replico	
+if ($continua)
+{
   $sql = " SELECT MAX(FechaHoraServ) as FechaMax FROM vehiculos ";
   $respVehiculos = $base->query($sql);
-  if ($respVehiculos) {
-    $rowFV = $respVehiculos->fetch(PDO::FETCH_ASSOC);
-    $fechaBuscarV = $rowFV["FechaMax"];
-    /* if($rowFV["FechaMax"] != ""){
-      $fechaBuscarV = substr($fechaBuscarV,0,10);
-      } */
-    $sqlCoSer = " SELECT * FROM vehiculos WHERE FechaHoraServ > '" . $fechaBuscarV . "' ORDER BY FechaHoraServ";
-    //echo $sqlCoSer;
-    $respVeServer = $dbUNC->query($sqlCoSer);
-    if ($respVeServer) {
-      foreach ($respVeServer as $rowV) {
-        /*         * *** Por cada vehiculo vamos a ver si esta el server => update, si no esta => insert *** */
-        $sqlSer = "SELECT * FROM vehiculos WHERE Dominio = '" . $rowV["Dominio"] . "' ";
-        if ($respServ = $base->query($sqlSer)) {
+  $rowFV = $respVehiculos->fetch(PDO::FETCH_ASSOC);
 
-          if ($rowV["idTipoVehiculo"] == "")
-            $rowV["idTipoVehiculo"] = 'NULL';
-          if ($rowV["Anio"] == "")
-            $rowV["Anio"] = 'NULL';
-          if ($rowV["idLocalidad"] == "")
-            $rowV["idLocalidad"] = 'NULL';
-          if ($rowV["MotorAnio"] == "")
-            $rowV["MotorAnio"] = 'NULL';
-          if ($rowV["ChasisAnio"] == "")
-            $rowV["ChasisAnio"] = 'NULL';
-          if ($rowV["NroEjes"] == "")
-            $rowV["NroEjes"] = 'NULL';
-          if ($rowV["idTipoUso"] == "")
-            $rowV["idTipoUso"] = 'NULL';
-          if ($rowV["Tara"] == "")
-            $rowV["Tara"] = 'NULL';
-          if ($rowV["PesoMax"] == "")
-            $rowV["PesoMax"] = 'NULL';
-          if ($rowV["CargaUtil"] == "")
-            $rowV["CargaUtil"] = 'NULL';
-          if ($rowV["Asientos"] == "")
-            $rowV["Asientos"] = 'NULL';
-          if ($rowV["idLocTMServ"] == "")
-            $rowV["idLocTMServ"] = 'NULL';
-          if ($rowV["idTipoServicio"] == "")
-            $rowV["idTipoServicio"] = 'NULL';
-          if ($rowV["idClaseServicio"] == "")
-            $rowV["idClaseServicio"] = 'NULL';
-          if ($rowV["NroInterno"] == "")
-            $rowV["NroInterno"] = 'NULL';
-          if ($rowV["idCategoria"] == "")
-            $rowV["idCategoria"] = 'NULL';
+  $fechaBuscarV = $rowFV["FechaMax"];
 
-          if ($respServ->rowCount() > 0) {
-            $sqlInTa = "UPDATE vehiculos SET idTipoVehiculo = " . $rowV["idTipoVehiculo"] . ",Marca = '" . addslashes($rowV["Marca"]) . "',
-                  Modelo='" . addslashes($rowV["Modelo"]) . "',Anio = " . $rowV["Anio"] . ",idLocalidad = " . $rowV["idLocalidad"] . ",
-                  MotorMarca = '" . addslashes($rowV["MotorMarca"]) . "',MotorNro = '" . addslashes($rowV["MotorNro"]) . "',MotorAnio = " . $rowV["MotorAnio"] . ",
-                  ChasisMarca = '" . addslashes($rowV["ChasisMarca"]) . "',ChasisNro = '" . addslashes($rowV["ChasisNro"]) . "',ChasisAnio = " . $rowV["ChasisAnio"] . ",
-                  TacografoMarca = '" . addslashes($rowV["TacografoMarca"]) . "',TacografoNro = '" . addslashes($rowV["TacografoNro"]) . "',CCCF='" . addslashes($rowV["CCCF"]) . "',
-                  TipoCombustible = '" . addslashes($rowV["TipoCombustible"]) . "',Pot = '" . addslashes($rowV["Pot"]) . "',NroEjes = " . $rowV["NroEjes"] . ",
-                  idTipoUso = " . $rowV["idTipoUso"] . ",Caja = '" . $rowV["Caja"] . "',PocisionMotor = '" . $rowV["PocisionMotor"] . "',
-                  Carroceria = '" . addslashes($rowV["Carroceria"]) . "',Expediente = '" . addslashes($rowV["Expediente"]) . "',AireAco=" . $rowV["AireAco"] . ",
-                  Bar = " . $rowV["Bar"] . ",Banio = " . $rowV["Banio"] . ",Calefaccion = " . $rowV["Calefaccion"] . ",Suspencion = '" . addslashes($rowV["Suspencion"]) . "',
-                  Tara = " . $rowV["Tara"] . ",PesoMax = " . $rowV["PesoMax"] . ",CargaUtil = " . $rowV["CargaUtil"] . ",Asientos = " . $rowV["Asientos"] . ",
-                  CodigoTitular = '" . $rowV["CodigoTitular"] . "',idLocTMServ = " . $rowV["idLocTMServ"] . ",TipoServTM = '" . $rowV["TipoServTM"] . "',
-                  idTipoServicio = " . $rowV["idTipoServicio"] . ",idClaseServicio = " . $rowV["idClaseServicio"] . ",NroInterno = '" . addslashes($rowV["NroInterno"]) . "',
-                  CompaniaSeguro = '" . addslashes($rowV["CompaniaSeguro"]) . "',NroPoliza = '" . addslashes($rowV["NroPoliza"]) . "',UltimoRecPatente='" . addslashes($rowV["UltimoRecPatente"]) . "',
-                  idCategoria = " . $rowV["idCategoria"] . ", FechaHoraServ = '" . $rowV["FechaHoraServ"] . "', FechaHoraTaller = '" . $row["FechaHoraTaller"] . "',
-                  Replicado = 1,PatenteMercosur=" . $rowV["PatenteMercosur"] . " WHERE Dominio = '" . $rowV["Dominio"] . "'";
-          } else {
-            $sqlInTa = "INSERT INTO vehiculos(Dominio,idTipoVehiculo,Marca,Modelo,Anio,idLocalidad,MotorMarca,MotorNro,MotorAnio,
-              ChasisMarca,ChasisNro,ChasisAnio,TacografoMarca,TacografoNro,CCCF,TipoCombustible,Pot,NroEjes,idTipoUso,Caja,
-              PocisionMotor,Carroceria,Expediente,AireAco,Bar,Banio,Calefaccion,Suspencion,Tara,PesoMax,CargaUtil,Asientos,
-              CodigoTitular,idLocTMServ,TipoServTM,idTipoServicio,idClaseServicio,NroInterno,CompaniaSeguro,NroPoliza,
-              UltimoRecPatente,idCategoria,FechaHoraServ,FechaHoraTaller,Replicado,PatenteMercosur) VALUES
-                ('" . $rowV["Dominio"] . "'," . $rowV["idTipoVehiculo"] . ",'" . addslashes($rowV["Marca"]) . "','" . addslashes($rowV["Modelo"]) . "'," . $rowV["Anio"] . ",
-               " . $rowV["idLocalidad"] . ",'" . addslashes($rowV["MotorMarca"]) . "','" . addslashes($rowV["MotorNro"]) . "'," . $rowV["MotorAnio"] . ",'" . addslashes($rowV["ChasisMarca"]) . "',
-               '" . addslashes($rowV["ChasisNro"]) . "'," . $rowV["ChasisAnio"] . ",'" . addslashes($rowV["TacografoMarca"]) . "','" . addslashes($rowV["TacografoNro"]) . "','" . addslashes($rowV["CCCF"]) . "',
-               '" . addslashes($rowV["TipoCombustible"]) . "','" . addslashes($rowV["Pot"]) . "'," . $rowV["NroEjes"] . "," . $rowV["idTipoUso"] . ",'" . addslashes($rowV["Caja"]) . "',
-               '" . addslashes($rowV["PocisionMotor"]) . "','" . addslashes($rowV["Carroceria"]) . "','" . addslashes($rowV["Expediente"]) . "'," . $rowV["AireAco"] . "," . $rowV["Bar"] . ",
-               " . $rowV["Banio"] . "," . $rowV["Calefaccion"] . ",'" . addslashes($rowV["Suspencion"]) . "'," . $rowV["Tara"] . "," . $rowV["PesoMax"] . "," . $rowV["CargaUtil"] . ",
-               " . $rowV["Asientos"] . ",'" . addslashes($rowV["CodigoTitular"]) . "'," . $rowV["idLocTMServ"] . ",'" . addslashes($rowV["TipoServTM"]) . "'," . $rowV["idTipoServicio"] . ",
-               " . $rowV["idClaseServicio"] . ",'" . addslashes($rowV["NroInterno"]) . "','" . addslashes($rowV["CompaniaSeguro"]) . "','" . addslashes($rowV["NroPoliza"]) . "','" . addslashes($rowV["UltimoRecPatente"]) . "',
-               " . $rowV["idCategoria"] . ",'" . $rowV["FechaHoraServ"] . "','" . $row["FechaHoraTaller"] . "',1," . $rowV["PatenteMercosur"] . ")";
-          }
-          //echo $sqlInTa;
-          if (!$base->query($sqlInTa)) {
-            /*             * ** SI OCURRIO UN ERROR CORTAMOS EL PROCESO **** */
-            $msnlog = "Ocurrio un al cargar un vehiculo en taller. - Taller: $nomTaller";
-            $continua = false;
-            break;
-          } else {
-            $cantVaT++;
-          }
-        } else {
-          /*           * ** SI OCURRIO UN ERROR CORTAMOS EL PROCESO **** */
-          $msnlog = "Ocurrio un error al buscar un vehiculo en central.";
-          $continua = false;
-          break;
+  $sqlCoSer = " SELECT * FROM vehiculos WHERE FechaHoraServ > '" . $fechaBuscarV . "' ORDER BY FechaHoraServ";
+  //echo $sqlCoSer;
+  $respVeServer = $dbUNC->query($sqlCoSer);
+  if ($respVeServer)
+  {
+    foreach ($respVeServer as $rowV)
+    {
+      $sqlSer = "SELECT * FROM vehiculos WHERE Dominio = '" . $rowV["Dominio"] . "' ";
+      $respServ = $base->query($sqlSer);
+
+      if ($respServ->rowCount() == 0)
+      {
+        $ComandoSQL =
+          "INSERT INTO vehiculos
+            (Dominio, idTipoVehiculo, Marca, Modelo, Anio, idLocalidad, MotorMarca, MotorNro, MotorAnio, ChasisMarca, ChasisNro, ChasisAnio, TacografoMarca, TacografoNro, TacografoRodado, CCCF, TipoCombustible, Pot, NroEjes, idTipoUso, Caja, PocisionMotor, AnioFabricacion, Carroceria, Expediente, AireAco, Bar, Banio, Calefaccion, Suspencion, Tara, PesoMax, CargaUtil, Asientos, CodigoTitular, idLocTMServ, TipoServTM, idTipoServicio, tiposServicios, idHabilitacion, codigoHabilitacion, idClaseServicio, prestadorServ, CuitPrestServ, NroInterno, CompaniaSeguro, NroPoliza, UltimoRecPatente, idCategoria, FechaHoraServ, TipoCarga, CertificadoDiscapacidad, PatenteMercosur, TipoDocConductor, NroDocConductor, NombreConductor, ApellidoConductor, FechaActualizacion, arTarjetaVerde, esReverificacion, idVerificacionOriginal, Status, idTallerVerif, nroFactura, Replicado)
+          VALUES
+              (:Dominio, :idTipoVehiculo, :Marca, :Modelo, :Anio, :idLocalidad, :MotorMarca, :MotorNro, :MotorAnio, :ChasisMarca, :ChasisNro, :ChasisAnio, :TacografoMarca, :TacografoNro, :TacografoRodado, :CCCF, :TipoCombustible, :Pot, :NroEjes, :idTipoUso, :Caja, :PocisionMotor, :AnioFabricacion, :Carroceria, :Expediente, :AireAco, :Bar, :Banio, :Calefaccion, :Suspencion, :Tara, :PesoMax, :CargaUtil, :Asientos, :CodigoTitular, :idLocTMServ, :TipoServTM, :idTipoServicio, :tiposServicios, :idHabilitacion, :codigoHabilitacion, :idClaseServicio, :prestadorServ, :CuitPrestServ, :NroInterno, :CompaniaSeguro, :NroPoliza, :UltimoRecPatente, :idCategoria, :FechaHoraServ, :TipoCarga, :CertificadoDiscapacidad, :PatenteMercosur, :TipoDocConductor, :NroDocConductor, :NombreConductor, :ApellidoConductor, :FechaActualizacion, :arTarjetaVerde, :esReverificacion, :idVerificacionOriginal, :Status, :idTallerVerif, :nroFactura, :Replicado)";
+      }
+      else
+      {
+        $ComandoSQL = "
+            UPDATE vehiculos
+            SET
+                idTipoVehiculo= :idTipoVehiculo, Marca= :Marca, Modelo= :Modelo, Anio= :Anio, idLocalidad= :idLocalidad, MotorMarca= :MotorMarca, MotorNro= :MotorNro, MotorAnio= :MotorAnio, ChasisMarca= :ChasisMarca, ChasisNro= :ChasisNro, ChasisAnio= :ChasisAnio, TacografoMarca= :TacografoMarca, TacografoNro= :TacografoNro, TacografoRodado= :TacografoRodado, CCCF= :CCCF, TipoCombustible= :TipoCombustible, Pot= :Pot, NroEjes= :NroEjes, idTipoUso= :idTipoUso, Caja= :Caja, PocisionMotor= :PocisionMotor, AnioFabricacion= :AnioFabricacion, Carroceria= :Carroceria, Expediente= :Expediente, AireAco= :AireAco, Bar= :Bar, Banio= :Banio, Calefaccion= :Calefaccion, Suspencion= :Suspencion, Tara= :Tara, PesoMax= :PesoMax, CargaUtil= :CargaUtil, Asientos= :Asientos, CodigoTitular= :CodigoTitular, idLocTMServ= :idLocTMServ, TipoServTM= :TipoServTM, idTipoServicio= :idTipoServicio, tiposServicios= :tiposServicios, idHabilitacion= :idHabilitacion, codigoHabilitacion= :codigoHabilitacion, idClaseServicio= :idClaseServicio, prestadorServ= :prestadorServ, CuitPrestServ= :CuitPrestServ, NroInterno= :NroInterno, CompaniaSeguro= :CompaniaSeguro, NroPoliza= :NroPoliza, UltimoRecPatente= :UltimoRecPatente, idCategoria= :idCategoria, FechaHoraServ= :FechaHoraServ, TipoCarga= :TipoCarga, CertificadoDiscapacidad= :CertificadoDiscapacidad, PatenteMercosur= :PatenteMercosur, TipoDocConductor= :TipoDocConductor, NroDocConductor= :NroDocConductor, NombreConductor= :NombreConductor, ApellidoConductor= :ApellidoConductor, FechaActualizacion= :FechaActualizacion, arTarjetaVerde= :arTarjetaVerde, esReverificacion= :esReverificacion, idVerificacionOriginal= :idVerificacionOriginal, Status= :Status, idTallerVerif= :idTallerVerif, nroFactura= :nroFactura, Replicado= :Replicado
+            WHERE
+                Dominio= :Dominio";
+      }
+
+      $SSQL = $base->prepare($ComandoSQL);
+
+      // Binds
+      //<editor-fold desc="Binds">
+      $SSQL->bindValue(':Dominio', $rowV["Dominio"]);
+      $SSQL->bindValue(':idTipoVehiculo', $rowV["idTipoVehiculo"]);
+      $SSQL->bindValue(':Marca', $rowV["Marca"]);
+      $SSQL->bindValue(':Modelo', $rowV["Modelo"]);
+      $SSQL->bindValue(':Anio', $rowV["Anio"]);
+      $SSQL->bindValue(':idLocalidad', $rowV["idLocalidad"]);
+      $SSQL->bindValue(':MotorMarca', $rowV["MotorMarca"]);
+      $SSQL->bindValue(':MotorNro', $rowV["MotorNro"]);
+      $SSQL->bindValue(':MotorAnio', $rowV["MotorAnio"]);
+      $SSQL->bindValue(':ChasisMarca', $rowV["ChasisMarca"]);
+      $SSQL->bindValue(':ChasisNro', $rowV["ChasisNro"]);
+      $SSQL->bindValue(':ChasisAnio', $rowV["ChasisAnio"]);
+      $SSQL->bindValue(':TacografoMarca', $rowV["TacografoMarca"]);
+      $SSQL->bindValue(':TacografoNro', $rowV["TacografoNro"]);
+      $SSQL->bindValue(':TacografoRodado', $rowV["TacografoRodado"]);
+      $SSQL->bindValue(':CCCF', $rowV["CCCF"]);
+      $SSQL->bindValue(':TipoCombustible', $rowV["TipoCombustible"]);
+      $SSQL->bindValue(':Pot', $rowV["Pot"]);
+      $SSQL->bindValue(':NroEjes', $rowV["NroEjes"]);
+      $SSQL->bindValue(':idTipoUso', $rowV["idTipoUso"]);
+      $SSQL->bindValue(':Caja', $rowV["Caja"]);
+      $SSQL->bindValue(':PocisionMotor', $rowV["PocisionMotor"]);
+      $SSQL->bindValue(':AnioFabricacion', $rowV["AnioFabricacion"]);
+      $SSQL->bindValue(':Carroceria', $rowV["Carroceria"]);
+      $SSQL->bindValue(':Expediente', $rowV["Expediente"]);
+      $SSQL->bindValue(':AireAco', $rowV["AireAco"]);
+      $SSQL->bindValue(':Bar', $rowV["Bar"]);
+      $SSQL->bindValue(':Banio', $rowV["Banio"]);
+      $SSQL->bindValue(':Calefaccion', $rowV["Calefaccion"]);
+      $SSQL->bindValue(':Suspencion', $rowV["Suspencion"]);
+      $SSQL->bindValue(':Tara', $rowV["Tara"]);
+      $SSQL->bindValue(':PesoMax', $rowV["PesoMax"]);
+      $SSQL->bindValue(':CargaUtil', $rowV["CargaUtil"]);
+      $SSQL->bindValue(':Asientos', $rowV["Asientos"]);
+      $SSQL->bindValue(':CodigoTitular', $rowV["CodigoTitular"]);
+      $SSQL->bindValue(':idLocTMServ', $rowV["idLocTMServ"]);
+      $SSQL->bindValue(':TipoServTM', $rowV["TipoServTM"]);
+      $SSQL->bindValue(':idTipoServicio', $rowV["idTipoServicio"]);
+      $SSQL->bindValue(':tiposServicios', $rowV["tiposServicios"]);
+      $SSQL->bindValue(':idHabilitacion', $rowV["idHabilitacion"]);
+      $SSQL->bindValue(':codigoHabilitacion', $rowV["codigoHabilitacion"]);
+      $SSQL->bindValue(':idClaseServicio', $rowV["idClaseServicio"]);
+      $SSQL->bindValue(':prestadorServ', $rowV["prestadorServ"]);
+      $SSQL->bindValue(':CuitPrestServ', $rowV["CuitPrestServ"]);
+      $SSQL->bindValue(':NroInterno', $rowV["NroInterno"]);
+      $SSQL->bindValue(':CompaniaSeguro', $rowV["CompaniaSeguro"]);
+      $SSQL->bindValue(':NroPoliza', $rowV["NroPoliza"]);
+      $SSQL->bindValue(':UltimoRecPatente', $rowV["UltimoRecPatente"]);
+      $SSQL->bindValue(':idCategoria', $rowV["idCategoria"]);
+      $SSQL->bindValue(':FechaHoraServ', $rowV["FechaHoraServ"]);
+      $SSQL->bindValue(':TipoCarga', $rowV["TipoCarga"]);
+      $SSQL->bindValue(':CertificadoDiscapacidad', $rowV["CertificadoDiscapacidad"]);
+      $SSQL->bindValue(':PatenteMercosur', $rowV["PatenteMercosur"]);
+      $SSQL->bindValue(':TipoDocConductor', $rowV["TipoDocConductor"]);
+      $SSQL->bindValue(':NroDocConductor', $rowV["NroDocConductor"]);
+      $SSQL->bindValue(':NombreConductor', $rowV["NombreConductor"]);
+      $SSQL->bindValue(':ApellidoConductor', $rowV["ApellidoConductor"]);
+      $SSQL->bindValue(':FechaActualizacion', $rowV["FechaActualizacion"]);
+      $SSQL->bindValue(':arTarjetaVerde', $rowV["arTarjetaVerde"]);
+      $SSQL->bindValue(':esReverificacion', $rowV["esReverificacion"]);
+      $SSQL->bindValue(':idVerificacionOriginal', $rowV["idVerificacionOriginal"]);
+      $SSQL->bindValue(':Status', $rowV["Status"]);
+      $SSQL->bindValue(':idTallerVerif', $rowV["idTallerVerif"]);
+      $SSQL->bindValue(':nroFactura', $rowV["nroFactura"]);
+      $SSQL->bindValue(':Replicado', 1);
+      //</editor-fold>
+
+      try
+      {
+        $Res = $SSQL->execute();
+
+        if (!$Res)
+        {
+          echo "Error al replicar vehiculo desde central " . $rowV["Dominio"] . "<br />";
+
+          print_r($SSQL->errorInfo());
+          exit();
         }
-      }/*       * ******* Cierra el foreach ****************** */
-    } else {
-      /*       * ** SI OCURRIO UN ERROR CORTAMOS EL PROCESO **** */
-      $msnlog = "Error al intentar leer los datos de los vehiculos en la base del Taller: $nomTaller";
-      $continua = false;
+
+        $cantVaT++;
+      } catch (Exception $e)
+      {
+        exit("ERROR");
+        throw $e;
+      }
+
     }
-  } else {
-    /*     * ** SI OCURRIO UN ERROR CORTAMOS EL PROCESO **** */
+  }
+  else
+  {
+    /*       * ** SI OCURRIO UN ERROR CORTAMOS EL PROCESO **** */
     $msnlog = "Error al intentar leer los datos de los vehiculos en la base del Taller: $nomTaller";
     $continua = false;
   }
 }
 
+//echo "so far"; exit;
+
 include 'Rep_VerifCertificados.php';
+include 'Rep_Adjuntos.php';
 include 'Rep_Equipos.php';
 include 'Rep_Auditorias.php';
 include 'Rep_Taller.php';
 include 'Rep_Habilitaciones.php';
 include 'Rep_CertificadosCCCF.php';
-include 'Rep_Adjuntos.php';
+include 'Rep_Defectos.php';
+include 'Rep_Pendientes.php';
+include 'Rep_Excepciones.php';
+include 'Rep_Prorrogas.php';
+include 'Rep_FotoValidaciones.php';
+include 'Rep_NoConformidades.php';
 include 'Rep_Parametricas.php';
+
 
 if ($continua) {
   $msnlog = "Finalizo con exito la replicaci&oacute;n del taller: $nomTaller";
@@ -440,16 +535,21 @@ if ($continua) {
 /* * ********************************************************************* */
 echo "<p><b>" . $msnlog . "</b></p>";
 echo "<p>Se enviaron $cantPaC registros de personas a Central.<br /> Se enviaron $cantVaC registros de vehiculos a Central. <br />
-	  Se recibieron $cantPaT registros de personas desde central. <br /> Se recibieron $cantVaT resistros de vehiculos desde central.<br />
+	  Se recibieron $cantPaT registros de personas desde central. <br /> Se recibieron $cantVaT registros de vehiculos desde central.<br />
  	  Se recibieron $obleasRec obleas desde Central. <br />Se enviaron $obleasEnv obleas modificadas a Central. <br />
     Se enviaron $cantVeraC registros de verificaciones a Central. <br />
-    Se enviaron $cantDefectosEnVerificaciones registros de defectos en verificaciones a Central. <br />
+    Se enviaron $cantDefectos registros de defectos en verificaciones a Central. <br />
     Se enviaron $cantCeraC de registros de certificados a central.   
 	  <br /> Se enviaron $cantEquiposAC registros de equipos a Central.
 	  <br /> Se enviaron $cantMantEqAC registros de mantenimientos a equipos a Central.
 	  <br /> Se enviaron $cantAudAC registros de auditorias a Central.	  
 <br />Se replicaron $cantHabilitaciones habilitaciones.
+<br />Se replicaron $cantEmpresasCCCF empresas desde el m&oacute;dulo CCCF.
 <br />Se replicaron $cantCertificadosCCCF Certificados CCCF.
-    <br /> Se recibieron $hmInstalaciones instalaciones. 
+<br />Se replicaron $cantExcepciones Excepciones.
+<br />Se replicaron $cantFotoValidaciones Excepciones.
+<br />Se replicaron $cantVerificacionesServicios Verificaciones Servicios.
+
+
  	  </p>";
 ?>
