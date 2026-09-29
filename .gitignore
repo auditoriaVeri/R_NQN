@@ -1,3 +1,6 @@
 .idea/
 .gitignore
 *.log
+.env
+.env.master
+.env.prod
