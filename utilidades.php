@@ -1,4 +1,35 @@
 <?php
+function cargarEnv() {
+    $envPath = dirname(__DIR__) . '/.env.master';
+    
+    if (!file_exists($envPath)) {
+        $envPath = '/var/www/html/.env.master';
+    }
+
+    if (!file_exists($envPath)) {
+        die("ERROR CRITICO: No se encontro el archivo de entorno .env.master en: $envPath\n");
+    }
+
+    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if (empty($line) || strpos($line, '#') === 0) {
+            continue;
+        }
+
+        if (strpos($line, '=') !== false) {
+            list($name, $value) = explode('=', $line, 2);
+            $name = trim($name);
+            $value = trim($value);
+            $value = trim($value, '"\'');
+
+            $_ENV[$name] = $value;
+            $_SERVER[$name] = $value;
+            putenv("{$name}={$value}");
+        }
+    }
+}
+
 function formatFecha($cadFecha)
 {
 	if($cadFecha != "")

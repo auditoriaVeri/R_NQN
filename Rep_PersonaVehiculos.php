@@ -1,36 +1,48 @@
 <?php
 
 require_once('PDOConfig.php');
-// require_once("sftpFunc.php");
 require_once('utilidades.php');
+
 $mensaje = "";
 $msnlog = "";
 
-/* Para que nos e corte la ejecucion por timeout */
+/* Para que no se corte la ejecucion por timeout */
 set_time_limit(0);
 
+// Mocks de SFTP para mantener compatibilidad con el codigo legacy inferior
 function SubirArchivo($archivo_local, $archivo_remoto) {
-  return true;
+    return true;
 }
 
-function ArchivoExistente($archivo_remoto)
-{
-	return false;
+function ArchivoExistente($archivo_remoto) {
+    return false;
 }
 
-try 
-{
-  $dbUNC = new PDO('mysql:host=vtvunc.ddns.net;dbname=vehicularunc;charset=utf8', 'usrRem', 'rtovtv*');
+// Variables de BD Central Fail-Fast
+$unc_host = $_ENV['UNC_host'] ?? null;
+$unc_name = $_ENV['UNC_dbname'] ?? null;
+$unc_user = $_ENV['UNC_user'] ?? null;
+$unc_pass = $_ENV['UNC_user_pass'] ?? null;
 
+if (!$unc_host || !$unc_name || !$unc_user || !$unc_pass) {
+    die("ERROR CRITICO: Credenciales de BD Central faltantes en .env.master\n");
+}
+
+try {
+    $dbUNC = new PDO("mysql:host={$unc_host};dbname={$unc_name};charset=utf8", $unc_user, $unc_pass);
 } catch (Exception $e) {
-  echo $e->getMessage();
-  exit();
+    echo "Fallo de conexion a BD Central: " . $e->getMessage();
+    exit();
 }
 
-//$dbUNC = new PDO('mysql:host=localhost;dbname=vehicularunc;charset=utf8', 'root', '');
 $base = new PDOConfig();
-$idTaller = 18;
-$nomTaller = "Control SRL";
+
+// Variables dinamicas del Taller
+$idTaller = $_ENV['taller_id'] ?? die("Falta taller_id en .env.master");
+$nomTaller = $_ENV['taller_name'] ?? die("Falta taller_name en .env.master");
+$nomTaller = str_replace('%', ' ', $nomTaller);
+$UploadsBasePath = $_ENV['uploads_path'] ?? die("Falta uploads_path en .env.master");
+
 $usu = "replicación automatica";
 $cantPaC = 0;
 $cantVaC = 0;
